@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Anonymous+Pro&display=swap');
+body{
+    font-family: "Anonymous Pro", sans-serif;
+    margin: auto;
+    /* text-align: center; */
+    padding: 0;
+    font-size: 20px;
+    text-transform: capitalize;
+    /* font-family: 'Proxima Nova', 'Helvetica', 'Arial', sans-serif; */
+    font-family: sans-serif;
+    color: rgb(20, 130, 167);
+    background-color: rgb(223, 228, 240) !important;
+
+}
+.container{
+  margin-top: 120px;
+}
+
+.hidden{
+  display: none !important;
+}
+.no-scroll {
+  overflow: hidden;
+}
+.confirm-form{
+  border: 1px solid #ccc;
+  background-color: white;
+}
+.confirm-label{
+  font-size: 18px;
+  padding: 1rem 1rem;
+}
+.btn-confirm{   
+  display: flex;
+  justify-content: space-around;
+  padding: 1rem 1rem;
+  background-color: #eee;
+}
+/* #btn-yes:hover, #btn-cancel:hover{
+  border: 2px solid #0a5fa5;
+} */
+#confirm{
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+
+  background-color: rgba(252, 252, 252, 0.3);
+  z-index: 2;
+
+  display: flex;
+  justify-content: center;
+  align-items: center
+}
+h2{
+  color:lightseagreen;
+  text-align: center;
+  padding: 10px;
+}
+.add{
+  text-align: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+
+}
+.add button{
+  padding: 0.5rem 2rem;
+}
+.dropdown-menu{
+  background: rgba(79, 89, 148, 0.9);
+  border: 0px solid  rgba(79, 89, 148, 0.9) !important;
+  color: #ccc !important;
+}
+
+.title{
+  font-weight: bold;
+  margin: 1rem;
+  font-size: 30px;
+  text-align: center;
+  text-transform: uppercase;
+}
+.con2{
+  display: inline-block;
+
+}
+.navbar-right{
+  margin-right: 3rem !important;
+}
+/* footer */
+.footer{
+  position: relative;
+  margin-bottom: 0;
+  margin-top: 2rem;
+  width: 100%;
+  height: 6.5rem;
+  background-color: rgba(74, 76, 83, 0.8);
+  
+}
+h6{
+  text-align: center;
+  margin-top: 0.5rem;
+  text-transform: uppercase;
+  color: lightblue;
+}
+.contact{
+  /* margin-top: 0.5rem; */
+  /* margin-bottom: 1rem !important; */
+  display: flex;
+  
+}
+.slogan{
+  color:rgb(7, 59, 90);
+  text-align: center !important;
+  margin-top: 0
+}
+.contact-icon{
+  margin-left: 2rem;
+  margin-right: auto;
+
+}
+.fas, .fab{
+  margin: 0 0.5rem;
+  font-size: 1.5rem;
+}
+.fa-phone{
+  color: green;
+}
+.fa-envelope-square{
+  color: rgb(212, 38, 38);
+}
+.fa-facebook{
+  color: #3a3add;
+}
+
+.fa-comments{
+  color:rgb(195, 196, 247) !important;
+  margin-left: auto;
+  margin-right: 2rem;
+}
+
+.list-inline{
+  display: flex;
+}
+
