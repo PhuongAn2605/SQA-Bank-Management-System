@@ -168,18 +168,18 @@ router.get("/account_edit_:accountId", function(req, res) {
     })()
 })
 
-router.post("/account_edit:accountId", function(req, res) {
+router.post("/account_edit_:accountId", function(req, res) {
     (async function() {
         let success = true
         var oid = new ObjectId(req.params["accountId"])
         var query = { "_id": oid }
-        objUser = null
+        result = null
         try {
-            objUser = await common.getDb().collection("account").findOne(query)
+            result = await common.getDb().collection("account").findOne(query)
         } catch (err) {
             console.log("error")
         }
-        if (objUser == null) {
+        if (result == null) {
             res.send("Account with id '" + req.params["accountId"] + "' cannot be found!")
             return;
         }
@@ -187,7 +187,7 @@ router.post("/account_edit:accountId", function(req, res) {
         let parts = {
             msg_style: "display:none;",
             accountId: req.params["accountId"],
-            accountNumber_value: req.body.cardNo,
+            accountNumber_value: req.body.accountNumber,
             user_value: req.body.username,
             password_value: req.body.password,
             address_value: req.body.address,
@@ -202,37 +202,36 @@ router.post("/account_edit:accountId", function(req, res) {
             parts["name_err"] = "<span style='color:red'>Username length is not valid</span>"
             success = false
         } else {
-            var query = { "_id": { $ne: oid }, username: req.body.username }
-            result = null
+            var q = { "_id": { $ne: oid }, username: req.body.username }
+            r = null
             try {
-                result = await common.getDb().collection("account").findOne(query)
+                r = await common.getDb().collection("account").findOne(q)
             } catch (err) {
                 console.log("error")
             }
-            if (result != null) {
+            if (r != null) {
                 parts["name_err"] = "<span style='color:red'>Username '" + req.body.username + "' has been used already</span>"
                 success = false
             }
         }
-        objUser["cardNo"] = req.body.accountNumber
-        objUser["username"] = req.body.username
-        objUser["address"] = req.body.address
-        objUser["dob"] = req.body.dob
-        objUser["phone"] = req.body.phone
-        objUser["email"] = req.body.email
+        result["cardNo"] = req.body.accountNumber
+        result["username"] = req.body.username
+        result["address"] = req.body.address
+        result["dob"] = req.body.dob
+        result["phone"] = req.body.phone
+        result["email"] = req.body.email
         if (req.body["password"] != "") {
             if (req.body["password"].length < 6 || req.body["password"].length > 32) {
                 parts["pass_err"] = "<span style='color:red'>Password length is not valid</span>"
                 success = false
             } else {
-                objUser["password"] = req.body.password;
+                result["password"] = req.body.password;
             }
         }
 
         if (success) {
-            var query = { "_id": oid }
             try {
-                const result = await common.getDb().collection("account").updateOne(query, { $set: objUser })
+                await common.getDb().collection("account").updateOne(query, { $set: result })
                 parts["msg_style"] = ""
             } catch (err) {
                 console.log(err)
@@ -243,7 +242,6 @@ router.post("/account_edit:accountId", function(req, res) {
         res.parts = {...res.parts, ...parts }
         res.viewpath = './public/accountEdit.html'
         await common.render(res)
-        res.redirect(302, "/account_list")
     })()
 })
 

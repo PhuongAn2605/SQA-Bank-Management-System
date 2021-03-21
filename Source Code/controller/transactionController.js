@@ -115,7 +115,7 @@ router.get("/transaction_edit_:transactionId", function(req, res) {
     })()
 })
 
-router.post("/transaction_edit:transactionId", function(req, res) {
+router.post("/transaction_edit_:transactionId", function(req, res) {
     (async function() {
         let success = true
         var oid = new ObjectId(req.params["transactionId"])
@@ -147,7 +147,6 @@ router.post("/transaction_edit:transactionId", function(req, res) {
         result["status"] = req.body.status
 
         if (success) {
-            var query = { "_id": oid }
             try {
                 const r = await common.getDb().collection("transaction").updateOne(query, { $set: result })
             } catch (err) {
