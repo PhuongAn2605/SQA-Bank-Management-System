@@ -181,14 +181,28 @@ router.get("/fund_transfer_list", function(req, res) {
         var objUser = null;
         try {
             objUser = await common.getDb().collection("account").findOne(query);
-
         } catch (err) {
             console.log("error");
         }
+        let giver = { "giver_name": objUser["username"] }
+        let result = null;
         let tbtext = "";
-        const result = await common.getDb().collection("transaction").find().toArray()
+        try {
+            result = await common.getDb().collection("transaction").find(giver).toArray()
+        } catch (err) {
+            console.log("error");
+        }
+
+        if (result == null) {
+            res.send("Cannot find this user with id: " + uid)
+        }
+
         let stt = 1
         result.forEach(function(transaction) {
+            var date = new Date(transaction["date"])
+            let strDateCreated = date.getHours() + ":" + date.getMinutes() + ", " +
+                date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+
             tbtext = tbtext + "<tr><th scope=\"row\">" + stt + "</th>" +
                 "<td>" + transaction["_id"] + "</td>" +
                 "<td>" + transaction["receiver_number"] + "</td>" +
@@ -196,7 +210,7 @@ router.get("/fund_transfer_list", function(req, res) {
                 "<td>" + transaction["bankName"] + "</td>" +
                 "<td>" + transaction["giver_number"] + "</td>" +
                 "<td>" + transaction["giver_name"] + "</td>" +
-                "<td>" + transaction["date"] + "</td>" +
+                "<td>" + strDateCreated + "</td>" +
                 "<td>" + transaction["amount"] + "</td>" +
                 "<td>" + transaction["status"] + "</td>" +
                 "</tr>"
@@ -237,15 +251,14 @@ router.get("/fund_transfer", async function(req, res) {
 router.post("/fund_transfer", async function(req, res) {
     var giverId = req.cookies["login"];
     var gId = new ObjectId(giverId);
-    var receiverId = req.body.card;
-    var rId = new ObjectId(receiverId);
+    var receiverCardNo = req.body.card;
     let giver = null;
     let receiver = null;
     let success = true;
 
     try {
         giver = await common.getDb().collection("account").findOne({ "_id": gId });
-        receiver = await common.getDb().collection("account").findOne({ "_id": rId });
+        receiver = await common.getDb().collection("account").findOne({ "cardNo": receiverCardNo });
     } catch (err) {
         console.log("error");
     }
@@ -257,15 +270,21 @@ router.post("/fund_transfer", async function(req, res) {
         user_name: giver["username"]
     }
 
+    if (receiverCardNo == giver["cardNo"]) {
+        res.send("That you dumbass!!!")
+        success = false
+        return
+    }
+
     if (giver == null) {
         res.send("User with id '" + gId + "' cannot be found!");
         return;
     } else if (receiver == null) {
-        res.send("User with id '" + rId + "' cannot be found!");
+        res.send("User with id '" + receiver["_id"] + "' cannot be found!");
         return;
     }
 
-    var amount = new Number(req.body.amount);
+    let amount = new Number(req.body.amount);
     let giverBalance = new Number(giver["balance"]);
     let receiverBalance = new Number(receiver["balance"]);
 
@@ -286,14 +305,14 @@ router.post("/fund_transfer", async function(req, res) {
         "giver_number": giver["cardNo"],
         "giver_name": giver["username"],
         "date": Date.now(),
-        "amount": amount,
+        "amount": Number(amount),
         "status": "completed",
     }
 
     try {
         await common.getDb().collection("transaction").insertOne(transactionObj)
         await common.getDb().collection("account").updateOne({ "_id": gId }, { $set: giver })
-        await common.getDb().collection("account").updateOne({ "_id": rId }, { $set: receiver })
+        await common.getDb().collection("account").updateOne({ "cardNo": receiverCardNo }, { $set: receiver })
     } catch (err) {
         console.log(err)
         res.send("500 errors inserting to db")

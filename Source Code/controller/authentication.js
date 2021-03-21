@@ -1,11 +1,7 @@
-var fs = require("fs");
-// var multer = require("multer");
 var express = require("express");
 var router = express.Router();
 var ObjectId = require("mongodb").ObjectID;
 var common = require("../common");
-// var upload = multer({ dest: 'uploads/' });
-// const sharp = require('sharp');
 
 router.get("/login", function(req, res) {
     (async function() {
@@ -18,7 +14,7 @@ router.get("/login", function(req, res) {
 
 router.post("/login", async function(req, res) {
     var query = { "username": req.body.username };
-    let p = { usr_value: req.body.username, msg: "" };
+    let p = { usr_value: "", msg: "" };
     var send_html = true,
         result = null;
     try {

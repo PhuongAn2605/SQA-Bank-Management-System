@@ -107,6 +107,8 @@ router.post("/account_create", function(req, res) {
             parts["pass_err"] = "<span style='color:red'>Password length is not valid</span>"
             success = false
         }
+
+        var bal = new Number(req.body.balance);
         if (success) {
             let accountObj = {
                 "role": "user",
@@ -117,7 +119,7 @@ router.post("/account_create", function(req, res) {
                 "dob": req.body.dob,
                 "phone": req.body.phone,
                 "email": req.body.email,
-                "balance": req.body.balance
+                "balance": bal
             }
             try {
                 await common.getDb().collection("account").insertOne(accountObj)
@@ -130,7 +132,7 @@ router.post("/account_create", function(req, res) {
         res.parts = {...res.parts, ...parts }
         res.viewpath = './public/accountAdd.html'
         await common.render(res)
-        // res.redirect(302, "/account_list")
+            // res.redirect(302, "/account_list")
     })()
 })
 
