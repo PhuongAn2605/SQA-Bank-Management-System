@@ -108,7 +108,6 @@ router.post("/account_create", function(req, res) {
             success = false
         }
 
-        var bal = new Number(req.body.balance);
         if (success) {
             let accountObj = {
                 "role": "user",
@@ -119,7 +118,7 @@ router.post("/account_create", function(req, res) {
                 "dob": req.body.dob,
                 "phone": req.body.phone,
                 "email": req.body.email,
-                "balance": bal
+                "balance": Number(req.body.balance)
             }
             try {
                 await common.getDb().collection("account").insertOne(accountObj)

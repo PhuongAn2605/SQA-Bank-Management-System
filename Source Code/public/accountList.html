@@ -24,9 +24,9 @@
             position: fixed;
             bottom: 0;
         }
+        
         a {
             text-decoration: none;
-            
         }
     </style>
 </head>
@@ -34,7 +34,7 @@
 <body>
     <div class="header"></div>
     <div class="container">
-        <div class="title">Account Report</div ><br><br>
+        <div class="title">Account Report</div><br><br>
         <!-- <div class="form-group row">
             <label for="inputZip" class="col-sm-2 col-form-label">Show</label>
             <div class="col-sm-2">
@@ -83,7 +83,7 @@
             }
         }
     </script>
-    <div class="footer">
+    <!-- <div class="footer">
 
         <h6>Contact</h6>
         <div class="slogan">We are there for you &nbsp<i class="far fa-smile"></i></div>
@@ -101,7 +101,7 @@
             <div class="message"><button type="button" class="btn btn-link" id="liveToastBtn"><i
                         class="fas fa-comments"></i></button></div>
         </div>
-    </div>
+    </div> -->
 
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -129,8 +129,7 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
@@ -157,12 +156,12 @@
             </div>
         </div>
     </div>
-<script>
-    let liveModel = document.querySelector("#liveToastBtn");
-    liveModel.addEventListener("click", function () {
-        $('.toast').toast('show');
-    });
-</script>
+    <script>
+        let liveModel = document.querySelector("#liveToastBtn");
+        liveModel.addEventListener("click", function() {
+            $('.toast').toast('show');
+        });
+    </script>
 </body>
 
 </html>

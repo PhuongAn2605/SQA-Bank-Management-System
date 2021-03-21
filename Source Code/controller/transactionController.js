@@ -9,6 +9,10 @@ router.get("/transaction_list", function(req, res) {
         const result = await common.getDb().collection("transaction").find().toArray()
         let stt = 1
         result.forEach(function(transaction) {
+            var date = new Date(transaction["date"])
+            let strDateCreated = date.getHours() + ":" + date.getMinutes() + ", " +
+                date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+
             tbtext = tbtext + "<tr><th scope=\"row\">" + stt + "</th>" +
                 "<td>" + transaction["_id"] + "</td>" +
                 "<td>" + transaction["receiver_number"] + "</td>" +
@@ -16,7 +20,7 @@ router.get("/transaction_list", function(req, res) {
                 "<td>" + transaction["bankName"] + "</td>" +
                 "<td>" + transaction["giver_number"] + "</td>" +
                 "<td>" + transaction["giver_name"] + "</td>" +
-                "<td>" + transaction["date"] + "</td>" +
+                "<td>" + strDateCreated + "</td>" +
                 "<td>" + transaction["amount"] + "</td>" +
                 "<td>" + transaction["status"] + "</td>" +
                 "<td><a href=\"/transaction_edit_" + transaction["_id"] + "\">Edit</a></td>" +
