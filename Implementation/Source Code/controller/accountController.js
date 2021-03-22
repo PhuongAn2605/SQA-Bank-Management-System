@@ -54,6 +54,7 @@ router.get("/account_create", function(req, res) {
         }
         let parts = {
             msg_style: "display:none;",
+            acc_err: "",
             accountNumber_value: "",
             user_value: "",
             password_value: "",
@@ -76,6 +77,7 @@ router.post("/account_create", function(req, res) {
         let success = true
         let parts = {
             msg_style: "display:none;",
+            acc_err: "",
             accountNumber_value: "",
             user_value: "",
             password_value: "",
@@ -88,25 +90,35 @@ router.post("/account_create", function(req, res) {
             pass_err: "Password must be 6 - 32 characters"
         }
         var query = { "username": req.body.username }
-        var result = null
+        var card = {"cardNo": req.body.accountNumber}
+        var result,r = null
+
+        try {
+            result = await common.getDb().collection("account").findOne(query)
+            r = await common.getDb().collection("account").findOne(card)
+        } catch (err) {
+            console.log("error")
+        }
+        
+        if(r != null){
+            parts["acc_err"] = "<span style='color:red'>Account already exists</span>"
+            success = false
+        }
+
         if (req.body.username.length < 3 || req.body.username.length > 32) {
             parts["name_err"] = "<span style='color:red'>Name length isn't valid</span>"
             success = false
-        } else {
-            try {
-                result = await common.getDb().collection("account").findOne(query)
-            } catch (err) {
-                console.log("error")
-            }
+        }else{
             if (result != null) {
-                parts["name_err"] = "<span style='color:red'>Name already exists</span>"
-                success = false
+            parts["name_err"] = "<span style='color:red'>Name already exists</span>"
+            success = false
             }
-        }
+        }  
+    
         if (req.body.password.length < 6 || req.body.password.length > 32) {
             parts["pass_err"] = "<span style='color:red'>Password length is not valid</span>"
             success = false
-        }
+        }      
 
         if (success) {
             let accountObj = {

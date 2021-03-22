@@ -73,6 +73,14 @@
             </tbody>
         </table>
     </div>
+    <script>
+        function confirmDelete(uid) {
+            var r = confirm("Are you sure you want to delete?")
+            if (r) {
+                window.location.href = '/transaction_delete_' + uid
+            }
+        }
+    </script>
     <!-- <div class="footer">
 
         <h6>Contact</h6>
