@@ -1,8 +1,8 @@
 # Banking-Management-System
 
-# Admin
+### Admin
 
-  # Before running the application, there are few things that you need to do: 
+  ##### Before running the application, there are few things that you need to do: 
 
   - Install MongoDB tools for restoring data: https://www.mongodb.com/try/download/database-tools
 
@@ -10,7 +10,7 @@
 
   - I will make a video to show you how to restore data. The vid should be available in the package i send.
 
-# User 
+### User 
 - Login to the banking system
 
 - If user didnt have any account, sign one up
