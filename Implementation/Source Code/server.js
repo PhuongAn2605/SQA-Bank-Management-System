@@ -1,8 +1,8 @@
+
 var express = require("express")
 var bodyParser = require("body-parser")
 var cookieParser = require('cookie-parser')
 var ObjectId = require("mongodb").ObjectID
-var common = require("./common")
 var app = express()
 var authController = require("./controller/authentication")
 var accController = require("./controller/accountController")
@@ -23,7 +23,7 @@ app.use(cookieParser())
 //                 var query = { "_id": oid }
 //                 objUser = null
 //                 try {
-//                     objUser = await common.getDb().collection("account").findOne(query)
+//                     objUser = await database.getDb().collection("account").findOne(query)
 //                 } catch (err) {
 //                     console.log("index.js: error")
 //                 }

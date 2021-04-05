@@ -1,7 +1,7 @@
 var express = require("express")
 var router = express.Router()
 var ObjectId = require("mongodb").ObjectID
-var common = require("../common")
+var database = require("../database")
 
 router.get("/account_list", function(req, res) {
     (async function() {
@@ -9,11 +9,11 @@ router.get("/account_list", function(req, res) {
         var oid = new ObjectId(uid)
         var query = { "_id": oid }
         let tbtext = "";
-        const result = await common.getDb().collection("account").find().toArray()
+        const result = await database.getDb().collection("account").find().toArray()
         let role = null
         try {
             //querying the database
-            role = await common.getDb().collection("account").findOne(query)
+            role = await database.getDb().collection("account").findOne(query)
         } catch (err) {
             console.log("error")
         }
@@ -36,7 +36,7 @@ router.get("/account_list", function(req, res) {
         let parts = { tb: tbtext }
         res.parts = {...res.parts, ...parts }
         res.viewpath = './public/accountList.html'
-        await common.render(res)
+        await database.render(res)
     })()
 })
 
@@ -47,8 +47,8 @@ router.get("/account_create", function(req, res) {
         var query = { "_id": oid }
         let role = null
         try {
-            //querying the common
-            role = await common.getDb().collection("account").findOne(query)
+            //querying the database
+            role = await database.getDb().collection("account").findOne(query)
         } catch (err) {
             console.log("error")
         }
@@ -68,7 +68,7 @@ router.get("/account_create", function(req, res) {
         }
         res.parts = {...res.parts, ...parts }
         res.viewpath = './public/accountAdd.html'
-        await common.render(res)
+        await database.render(res)
     })()
 })
 
@@ -94,8 +94,8 @@ router.post("/account_create", function(req, res) {
         var result,r = null
 
         try {
-            result = await common.getDb().collection("account").findOne(query)
-            r = await common.getDb().collection("account").findOne(card)
+            result = await database.getDb().collection("account").findOne(query)
+            r = await database.getDb().collection("account").findOne(card)
         } catch (err) {
             console.log("error")
         }
@@ -133,7 +133,7 @@ router.post("/account_create", function(req, res) {
                 "balance": Number(req.body.balance)
             }
             try {
-                await common.getDb().collection("account").insertOne(accountObj)
+                await database.getDb().collection("account").insertOne(accountObj)
                 parts["msg_style"] = ""
             } catch (err) {
                 console.log(err)
@@ -142,7 +142,7 @@ router.post("/account_create", function(req, res) {
         }
         res.parts = {...res.parts, ...parts }
         res.viewpath = './public/accountAdd.html'
-        await common.render(res)
+        await database.render(res)
             // res.redirect(302, "/account_list")
     })()
 })
@@ -153,7 +153,7 @@ router.get("/account_edit_:accountId", function(req, res) {
         var query = { "_id": oid }
         result = null
         try {
-            result = await common.getDb().collection("account").findOne(query)
+            result = await database.getDb().collection("account").findOne(query)
         } catch (err) {
             console.log("error")
         }
@@ -176,7 +176,7 @@ router.get("/account_edit_:accountId", function(req, res) {
         }
         res.parts = {...res.parts, ...parts }
         res.viewpath = './public/accountEdit.html'
-        await common.render(res)
+        await database.render(res)
     })()
 })
 
@@ -187,7 +187,7 @@ router.post("/account_edit_:accountId", function(req, res) {
         var query = { "_id": oid }
         result = null
         try {
-            result = await common.getDb().collection("account").findOne(query)
+            result = await database.getDb().collection("account").findOne(query)
         } catch (err) {
             console.log("error")
         }
@@ -217,7 +217,7 @@ router.post("/account_edit_:accountId", function(req, res) {
             var q = { "_id": { $ne: oid }, username: req.body.username }
             r = null
             try {
-                r = await common.getDb().collection("account").findOne(q)
+                r = await database.getDb().collection("account").findOne(q)
             } catch (err) {
                 console.log("error")
             }
@@ -243,7 +243,7 @@ router.post("/account_edit_:accountId", function(req, res) {
 
         if (success) {
             try {
-                await common.getDb().collection("account").updateOne(query, { $set: result })
+                await database.getDb().collection("account").updateOne(query, { $set: result })
                 parts["msg_style"] = ""
             } catch (err) {
                 console.log(err)
@@ -253,7 +253,7 @@ router.post("/account_edit_:accountId", function(req, res) {
         }
         res.parts = {...res.parts, ...parts }
         res.viewpath = './public/accountEdit.html'
-        await common.render(res)
+        await database.render(res)
     })()
 })
 
@@ -263,7 +263,7 @@ router.get("/account_delete_:accountId", function(req, res) {
         var query = { "_id": oid }
         result = null
         try {
-            result = await common.getDb().collection("account").deleteOne(query)
+            result = await database.getDb().collection("account").deleteOne(query)
         } catch (err) {
             res.send("database error")
             return;

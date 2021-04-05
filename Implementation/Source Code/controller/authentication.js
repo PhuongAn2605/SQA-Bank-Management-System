@@ -1,14 +1,14 @@
 var express = require("express");
 var router = express.Router();
 var ObjectId = require("mongodb").ObjectID;
-var common = require("../common");
+var database = require("../database");
 
 router.get("/login", function(req, res) {
     (async function() {
         let p = { usr_value: "", msg: "Sign in" };
         res.parts = {...res.parts, ...p };
         res.viewpath = './public/login.html';
-        await common.render(res);
+        await database.render(res);
     })()
 })
 
@@ -18,7 +18,7 @@ router.post("/login", async function(req, res) {
     var send_html = true,
         result = null;
     try {
-        result = await common.getDb().collection("account").findOne(query);
+        result = await database.getDb().collection("account").findOne(query);
     } catch (err) {
         console.log("error");
     }
@@ -42,21 +42,21 @@ router.post("/login", async function(req, res) {
     if (send_html) {
         res.parts = {...res.parts, ...p };
         res.viewpath = './public/login.html';
-        await common.render(res);
+        await database.render(res);
     }
 })
 
 router.get('/home_page', async function(req, res) {
     res.viewpath = './public/homePage.html';
     res.parts = {...res.parts };
-    await common.render(res);
+    await database.render(res);
 })
 
 router.get('/admin', async function(req, res) {
     res.viewpath = './public/mainPage.html';
     res.parts = {...res.parts };
     // console.log(res.parts);
-    await common.render(res);
+    await database.render(res);
 })
 
 router.get('/user', async function(req, res) {
@@ -65,7 +65,7 @@ router.get('/user', async function(req, res) {
     var query = { "_id": oid };
     var objUser = null;
     try {
-        objUser = await common.getDb().collection("account").findOne(query);
+        objUser = await database.getDb().collection("account").findOne(query);
     } catch (err) {
         console.log("error");
     }
@@ -75,7 +75,7 @@ router.get('/user', async function(req, res) {
     }
     res.viewpath = './public/MainPage_User.html';
     res.parts = {...res.parts, ...parts };
-    await common.render(res);
+    await database.render(res);
 })
 
 router.get("/sign_up", function(req, res) {
@@ -86,7 +86,7 @@ router.get("/sign_up", function(req, res) {
         }
         res.parts = {...res.parts, ...parts }
         res.viewpath = './public/Register.html'
-        await common.render(res)
+        await database.render(res)
     })()
 })
 
@@ -104,7 +104,7 @@ router.post("/sign_up", function(req, res) {
             success = false
         } else {
             try {
-                result = await common.getDb().collection("account").findOne(query)
+                result = await database.getDb().collection("account").findOne(query)
             } catch (err) {
                 console.log("error")
             }
@@ -130,7 +130,7 @@ router.post("/sign_up", function(req, res) {
                 "balance": "0"
             }
             try {
-                await common.getDb().collection("account").insertOne(accountObj)
+                await database.getDb().collection("account").insertOne(accountObj)
                 parts["msg_style"] = ""
             } catch (err) {
                 console.log(err)
@@ -139,7 +139,7 @@ router.post("/sign_up", function(req, res) {
         }
         res.parts = {...res.parts, ...parts }
         res.viewpath = './public/Register.html'
-        await common.render(res)
+        await database.render(res)
     })()
 })
 
@@ -149,7 +149,7 @@ router.get("/profile", async function(req, res) {
     var query = { "_id": oid };
     objUser = null;
     try {
-        objUser = await common.getDb().collection("account").findOne(query);
+        objUser = await database.getDb().collection("account").findOne(query);
     } catch (err) {
         console.log("error");
     }
@@ -173,7 +173,7 @@ router.get("/profile", async function(req, res) {
     } else if (dbrole == "user") {
         res.viewpath = './public/Profile.html';
     }
-    await common.render(res);
+    await database.render(res);
 })
 
 router.post("/profile", async function(req, res) {
@@ -183,7 +183,7 @@ router.post("/profile", async function(req, res) {
     var query = { "_id": oid };
     objUser = null;
     try {
-        objUser = await common.getDb().collection("account").findOne(query);
+        objUser = await database.getDb().collection("account").findOne(query);
     } catch (err) {
         console.log("error");
     }
@@ -222,7 +222,7 @@ router.post("/profile", async function(req, res) {
         var query = { "_id": { $ne: oid }, username: req.body.username };
         result = null;
         try {
-            result = await common.getDb().collection("account").findOne(query);
+            result = await database.getDb().collection("account").findOne(query);
         } catch (err) {
             console.log("error");
         }
@@ -250,7 +250,7 @@ router.post("/profile", async function(req, res) {
     if (success) {
         var query = { "_id": oid };
         try {
-            const result = await common.getDb().collection("account").updateOne(query, { $set: objUser });
+            const result = await database.getDb().collection("account").updateOne(query, { $set: objUser });
         } catch (err) {
             console.log(err)
             res.send("500 error updating db")
@@ -265,7 +265,7 @@ router.post("/profile", async function(req, res) {
     } else if (dbrole == "user") {
         res.viewpath = './public/Profile.html';
     }
-    await common.render(res)
+    await database.render(res)
 })
 
 router.get("/sign_out", function(req, res) {

@@ -1,7 +1,7 @@
 var fs = require("fs")
 var MongoClient = require("mongodb").MongoClient
 
-class Common {
+class Database {
 
     _dbo = null
 
@@ -48,4 +48,4 @@ class Common {
     }
 }
 
-module.exports = new Common()
+module.exports = new Database()

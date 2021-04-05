@@ -1,7 +1,7 @@
 var express = require("express")
 var router = express.Router()
 var ObjectId = require("mongodb").ObjectID
-var common = require("../common")
+var common = require("../database")
 
 router.get("/transaction_list", function(req, res) {
     (async function() {
