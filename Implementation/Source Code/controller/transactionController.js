@@ -1,12 +1,12 @@
 var express = require("express")
 var router = express.Router()
 var ObjectId = require("mongodb").ObjectID
-var common = require("../database")
+var database = require("../database")
 
 router.get("/transaction_list", function(req, res) {
     (async function() {
         let tbtext = "";
-        const result = await common.getDb().collection("transaction").find().toArray()
+        const result = await database.getDb().collection("transaction").find().toArray()
         let stt = 1
         result.forEach(function(transaction) {
             var date = new Date(transaction["date"])
@@ -31,7 +31,7 @@ router.get("/transaction_list", function(req, res) {
         let parts = { tb: tbtext }
         res.parts = {...res.parts, ...parts }
         res.viewpath = './public/transactionList.html'
-        await common.render(res)
+        await database.render(res)
     })()
 })
 
@@ -47,7 +47,7 @@ router.get("/transaction_create", function(req, res) {
         }
         res.parts = {...res.parts, ...parts }
         res.viewpath = './public/transactionAdd.html'
-        await common.render(res)
+        await database.render(res)
     })()
 })
 
@@ -73,7 +73,7 @@ router.post("/transaction_create", function(req, res) {
             "status": req.body.status,
         }
         try {
-            await common.getDb().collection("transaction").insertOne(transactionObj)
+            await database.getDb().collection("transaction").insertOne(transactionObj)
         } catch (err) {
             console.log(err)
             res.send("500 errors inserting to db")
@@ -82,7 +82,7 @@ router.post("/transaction_create", function(req, res) {
 
         res.parts = {...res.parts, ...parts }
         res.viewpath = './public/transactionAdd.html'
-        await common.render(res)
+        await database.render(res)
 
     })()
 })
@@ -93,7 +93,7 @@ router.get("/transaction_edit_:transactionId", function(req, res) {
         var query = { "_id": oid }
         result = null
         try {
-            result = await common.getDb().collection("transaction").findOne(query)
+            result = await database.getDb().collection("transaction").findOne(query)
         } catch (err) {
             console.log("error")
         }
@@ -111,7 +111,7 @@ router.get("/transaction_edit_:transactionId", function(req, res) {
         }
         res.parts = {...res.parts, ...parts }
         res.viewpath = './public/transactionEdit.html'
-        await common.render(res)
+        await database.render(res)
     })()
 })
 
@@ -122,7 +122,7 @@ router.post("/transaction_edit_:transactionId", function(req, res) {
         var query = { "_id": oid }
         result = null
         try {
-            result = await common.getDb().collection("transaction").findOne(query)
+            result = await database.getDb().collection("transaction").findOne(query)
         } catch (err) {
             console.log("error")
         }
@@ -148,7 +148,7 @@ router.post("/transaction_edit_:transactionId", function(req, res) {
 
         if (success) {
             try {
-                const r = await common.getDb().collection("transaction").updateOne(query, { $set: result })
+                const r = await database.getDb().collection("transaction").updateOne(query, { $set: result })
             } catch (err) {
                 console.log(err)
                 res.send("500 error updating db")
@@ -157,7 +157,7 @@ router.post("/transaction_edit_:transactionId", function(req, res) {
         }
         res.parts = {...res.parts, ...parts }
         res.viewpath = './public/transactionEdit.html'
-        await common.render(res)
+        await database.render(res)
     })()
 })
 
@@ -167,7 +167,7 @@ router.get("/transaction_delete_:transactionId", function(req, res) {
         var query = { "_id": oid }
         result = null
         try {
-            result = await common.getDb().collection("transaction").deleteOne(query)
+            result = await database.getDb().collection("transaction").deleteOne(query)
         } catch (err) {
             res.send("database error")
             return;
@@ -183,7 +183,7 @@ router.get("/fund_transfer_list", function(req, res) {
         var query = { "_id": oid };
         var objUser = null;
         try {
-            objUser = await common.getDb().collection("account").findOne(query);
+            objUser = await database.getDb().collection("account").findOne(query);
         } catch (err) {
             console.log("error");
         }
@@ -191,7 +191,7 @@ router.get("/fund_transfer_list", function(req, res) {
         let result = null;
         let tbtext = "";
         try {
-            result = await common.getDb().collection("transaction").find(giver).toArray()
+            result = await database.getDb().collection("transaction").find(giver).toArray()
         } catch (err) {
             console.log("error");
         }
@@ -226,7 +226,7 @@ router.get("/fund_transfer_list", function(req, res) {
         }
         res.parts = {...res.parts, ...parts }
         res.viewpath = './public/FundTransReport.html'
-        await common.render(res)
+        await database.render(res)
     })()
 })
 
@@ -236,7 +236,7 @@ router.get("/fund_transfer", async function(req, res) {
     var query = { "_id": oid };
     var objUser = null;
     try {
-        objUser = await common.getDb().collection("account").findOne(query);
+        objUser = await database.getDb().collection("account").findOne(query);
     } catch (err) {
         console.log("error");
     }
@@ -248,7 +248,7 @@ router.get("/fund_transfer", async function(req, res) {
     }
     res.parts = {...res.parts, ...parts }
     res.viewpath = "./public/FundTransfer.html"
-    await common.render(res)
+    await database.render(res)
 })
 
 router.post("/fund_transfer", async function(req, res) {
@@ -260,8 +260,8 @@ router.post("/fund_transfer", async function(req, res) {
     let success = true;
 
     try {
-        giver = await common.getDb().collection("account").findOne({ "_id": gId });
-        receiver = await common.getDb().collection("account").findOne({ "cardNo": receiverCardNo });
+        giver = await database.getDb().collection("account").findOne({ "_id": gId });
+        receiver = await database.getDb().collection("account").findOne({ "cardNo": receiverCardNo });
     } catch (err) {
         console.log("error");
     }
@@ -313,9 +313,9 @@ router.post("/fund_transfer", async function(req, res) {
     }
 
     try {
-        await common.getDb().collection("transaction").insertOne(transactionObj)
-        await common.getDb().collection("account").updateOne({ "_id": gId }, { $set: giver })
-        await common.getDb().collection("account").updateOne({ "cardNo": receiverCardNo }, { $set: receiver })
+        await database.getDb().collection("transaction").insertOne(transactionObj)
+        await database.getDb().collection("account").updateOne({ "_id": gId }, { $set: giver })
+        await database.getDb().collection("account").updateOne({ "cardNo": receiverCardNo }, { $set: receiver })
     } catch (err) {
         console.log(err)
         res.send("500 errors inserting to db")
@@ -323,7 +323,7 @@ router.post("/fund_transfer", async function(req, res) {
 
     res.parts = {...res.parts, ...parts };
     res.viewpath = "./public/FundTransfer.html"
-    await common.render(res)
+    await database.render(res)
 })
 
 module.exports = router
