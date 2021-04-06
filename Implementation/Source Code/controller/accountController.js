@@ -142,6 +142,8 @@ router.post("/account_create", function(req, res) {
         }
         res.parts = {...res.parts, ...parts }
         res.viewpath = './public/accountAdd.html'
+        res.statusCode = 201;
+        console.log(res);
         await database.render(res)
             // res.redirect(302, "/account_list")
     })()

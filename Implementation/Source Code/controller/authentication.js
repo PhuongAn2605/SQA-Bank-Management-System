@@ -8,6 +8,7 @@ router.get("/login", function(req, res) {
         let p = { usr_value: "", msg: "Sign in" };
         res.parts = {...res.parts, ...p };
         res.viewpath = './public/login.html';
+        // console.log(res);
         await database.render(res);
     })()
 })
@@ -60,7 +61,9 @@ router.get('/admin', async function(req, res) {
 })
 
 router.get('/user', async function(req, res) {
+    // console.log(req);
     var uid = req.cookies["login"];
+    // console.log(uid);
     var oid = new ObjectId(uid);
     var query = { "_id": oid };
     var objUser = null;
@@ -75,6 +78,7 @@ router.get('/user', async function(req, res) {
     }
     res.viewpath = './public/MainPage_User.html';
     res.parts = {...res.parts, ...parts };
+    console.log(res.parts);
     await database.render(res);
 })
 

@@ -6,9 +6,9 @@ var database = require("../../database")
 const { MongoClient } = require('mongodb');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
-describe('should insert a transaction into collection', () => {
+describe('TEST TRANSACTION', () => {
     let connection;
-    let db;
+    let transaction;
 
     beforeAll(async () => {
         mongo = new MongoMemoryServer();
@@ -16,7 +16,8 @@ describe('should insert a transaction into collection', () => {
         connection = await MongoClient.connect(mongoUri, {
           useNewUrlParser: true,
         });
-        // db = await database.getDb().collection("account");
+        transaction = await database.getDb().collection("transaction");
+        await transaction.deleteMany({});
     });
     
     afterAll(async () => {
@@ -26,10 +27,10 @@ describe('should insert a transaction into collection', () => {
     });
 
     it('should insert a transaction into collection', async () => {
-        const transaction = database.getDb().collection("transaction");
+        transaction = database.getDb().collection("transaction");
     
         const mockTransaction = {
-            _id: "Transaction123",
+            _id: "Transaction3123",
             receiver_number: "123456789123",
             receiver_name: "Phuong An",
             bankName: "BIDV",
@@ -42,7 +43,7 @@ describe('should insert a transaction into collection', () => {
         await transaction.insertOne(mockTransaction);
     
         const insertedTransaction = await transaction.findOne({_id: mockTransaction["_id"]});
-        console.log(insertedTransaction);
+        // console.log(insertedTransaction);
         expect(insertedTransaction).toStrictEqual(mockTransaction);
       });
     });
