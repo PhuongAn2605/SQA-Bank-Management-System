@@ -25,12 +25,13 @@ describe('insert', () => {
         await database.close();
     });
 
-    it('should insert a doc into collection', async () => {
+    it('should insert an account into collection', async () => {
         const account = database.getDb().collection("account");
     
         const mockAccount = {
+            _id: "User123",
             role: 'user', 
-            cardNo: '1234567890123',
+            cardNo: '12345678901235',
             username: "Phuongzz",
             password: "12345678",
             address: "HD",
@@ -41,7 +42,8 @@ describe('insert', () => {
         };
         await account.insertOne(mockAccount);
     
-        const insertedAccount = await account.findOne({cardNo: '1234567890123'});
-        expect(insertedAccount).toEqual(mockAccount);
+        const insertedAccount = await account.findOne({_id: mockAccount["_id"]});
+        console.log(insertedAccount);
+        expect(insertedAccount).toStrictEqual(mockAccount);
       });
     });

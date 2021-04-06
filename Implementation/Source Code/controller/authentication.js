@@ -139,6 +139,7 @@ router.post("/sign_up", function(req, res) {
         }
         res.parts = {...res.parts, ...parts }
         res.viewpath = './public/Register.html'
+        console.log(res)
         await database.render(res)
     })()
 })
