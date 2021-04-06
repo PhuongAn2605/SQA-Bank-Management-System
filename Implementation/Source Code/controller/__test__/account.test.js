@@ -41,7 +41,7 @@ describe('insert', () => {
         };
         await account.insertOne(mockAccount);
     
-        const insertedAccount = await account.findOne({accountNo: '1234567890123'});
+        const insertedAccount = await account.findOne({cardNo: '1234567890123'});
         expect(insertedAccount).toEqual(mockAccount);
       });
     });
