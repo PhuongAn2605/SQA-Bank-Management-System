@@ -42,15 +42,14 @@ describe('TEST AUTHENTICATION', () => {
     });
 
     it("POST LOGIN ADMIN", async () => {
-       let data = await request(app).post('/login')
-    //    .set('Accept', 'application/json')
+       let response = await request(app).post('/login')
        .send({
            username: mockUser.username,
            password: mockUser.password,
            dbrole:"admin"
        })
-    //    expect('Content-Type', /json/)
        .expect(200);
+    //    console.log(response);
     })
 
     it("POST LOGIN USER", async () => {

@@ -54,8 +54,8 @@ describe('TEST AUTHENTICATION', () => {
       // })
 
       it("Create an account", async () => {
-        const response = request(app).get('/account_create')
-        .set('Accept', 'application/json')
+        const response = request(app).post('/account_create')
+        // .set('Accept', 'application/json')
         .send({
             role: 'user', 
             cardNo: '123456789012356',
@@ -67,7 +67,7 @@ describe('TEST AUTHENTICATION', () => {
             email: "anphuong2605@gmail.com",
             balance: "0"
         })
-        .expect('Content-Type', /json/)
+        // .expect('Content-Type', /json/)
         .expect(201);
         console.log(response);
 
