@@ -1,26 +1,32 @@
-import { MongoClient } from 'mongodb';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-var database = require("../database");
+const { MongoClient } = require('mongodb');
+const { MongoMemoryServer } = require('mongodb-memory-server');
 
-let mongo;
+// describe('insert', () => {
+//   let connection;
+//   let db;
+
+
+// let mongo;
 beforeAll(async () => {
     mongo = new MongoMemoryServer();
     const mongoUri = await mongo.getUri();
-
-    await MongoClient.connect(mongoUri, {
-        useNewParser: true,
-        useUnifiedTopology: true
+    connection = await MongoClient.connect(mongoUri, {
+      useNewUrlParser: true,
     });
+    db = await connection.db("SQA");
 });
 
-beforeEach(async () => {
-    const collections = await database.getDb().collections();
-    for(let collection of collections){
-        await collection.deleteMany({});
-    }
-});
+// beforeEach(async () => {
+//     console.log(mongoose.connection);
+//     const collections = await mongoose.connection.db.collections();
+
+//   for (let collection of collections) {
+//     await collection.deleteMany({});
+//   }
+// });
 
 afterAll(async () => {
-    await mongo.stop();
-    await MongoClient.connection.close();
+    await connection.close();
+    await db.close();
 });
+// });

@@ -57,3 +57,8 @@ app.get("/admin", function(req, res) {
 })
 
 app.listen(5000)
+// module.export={
+//     app
+// }
+
+module.exports = {app};
