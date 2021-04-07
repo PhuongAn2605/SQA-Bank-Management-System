@@ -9,6 +9,7 @@
         "cookie-parser": "^1.4.5",
         "express": "^4.17.1",
         "fs": "^0.0.1-security",
+        "js-cookie": "^2.2.1",
         "modules": "^0.4.0",
         "mongodb": "^3.6.5",
         "node": "^15.10.0",

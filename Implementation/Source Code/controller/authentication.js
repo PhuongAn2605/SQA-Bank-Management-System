@@ -78,7 +78,7 @@ router.get('/user', async function(req, res) {
     }
     res.viewpath = './public/MainPage_User.html';
     res.parts = {...res.parts, ...parts };
-    console.log(res.parts);
+    // console.log(res.parts);
     await database.render(res);
 })
 
@@ -124,7 +124,7 @@ router.post("/sign_up", function(req, res) {
         if (success) {
             let accountObj = {
                 "role": "user",
-                "cardNo": req.body.accountNumber,
+                "cardNo": req.body.cardNo,
                 "username": req.body.username,
                 "password": req.body.password,
                 "address": req.body.address,
@@ -143,7 +143,7 @@ router.post("/sign_up", function(req, res) {
         }
         res.parts = {...res.parts, ...parts }
         res.viewpath = './public/Register.html'
-        console.log(res)
+        // console.log(res)
         await database.render(res)
     })()
 })

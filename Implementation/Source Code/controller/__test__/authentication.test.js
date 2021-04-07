@@ -42,14 +42,22 @@ describe('TEST AUTHENTICATION', () => {
     });
 
     it("POST LOGIN ADMIN", async () => {
-       let response = await request(app).post('/login')
+       let data = await request(app).post('/login')
        .send({
-           username: mockUser.username,
-           password: mockUser.password,
+           username: "test-admin",
+           password: "12345",
            dbrole:"admin"
        })
        .expect(200);
-    //    console.log(response);
+    //    console.log(response.text);
+
+    const response = request(app).get('/account_list')
+        .set('Accept', 'application/json')
+        .set("Cookie", data.body._id)
+        .expect('Content-Type', /json/)
+        .expect(201);
+
+        // console.log(data.body._id)
     })
 
     it("POST LOGIN USER", async () => {
