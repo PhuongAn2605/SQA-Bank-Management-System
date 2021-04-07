@@ -3,8 +3,8 @@ var router = express.Router()
 var ObjectId = require("mongodb").ObjectID
 var database = require("../database")
 
-router.get("/account_list", function(req, res) {
-    (async function() {
+router.get("/account_list", function (req, res) {
+    (async function () {
         var uid = req.cookies['login']
         // console.log(req);
         var oid = new ObjectId(uid)
@@ -19,7 +19,7 @@ router.get("/account_list", function(req, res) {
             console.log("error")
         }
         let stt = 1
-        result.forEach(function(account) {
+        result.forEach(function (account) {
             tbtext = tbtext + "<tr><th scope=\"row\">" + stt + "</th>" +
                 "<td>" + account["cardNo"] + "</td>" +
                 "<td>" + account["username"] + "</td>" +
@@ -35,14 +35,14 @@ router.get("/account_list", function(req, res) {
             stt++
         })
         let parts = { tb: tbtext }
-        res.parts = {...res.parts, ...parts }
+        res.parts = { ...res.parts, ...parts }
         res.viewpath = './public/accountList.html'
         await database.render(res)
     })()
 })
 
-router.get("/account_create", function(req, res) {
-    (async function() {
+router.get("/account_create", function (req, res) {
+    (async function () {
         var uid = req.cookies['login']
         var oid = new ObjectId(uid)
         var query = { "_id": oid }
@@ -67,14 +67,14 @@ router.get("/account_create", function(req, res) {
             name_err: "Username must be from 4 - 32 characters",
             pass_err: "Password must be 6 - 32 characters"
         }
-        res.parts = {...res.parts, ...parts }
+        res.parts = { ...res.parts, ...parts }
         res.viewpath = './public/accountAdd.html'
         await database.render(res)
     })()
 })
 
-router.post("/account_create", function(req, res) {
-    (async function() {
+router.post("/account_create", function (req, res) {
+    (async function () {
         let success = true
         let parts = {
             msg_style: "display:none;",
@@ -91,8 +91,8 @@ router.post("/account_create", function(req, res) {
             pass_err: "Password must be 6 - 32 characters"
         }
         var query = { "username": req.body.username }
-        var card = {"cardNo": req.body.cardNo}
-        var result,r = null
+        var card = { "cardNo": req.body.cardNo }
+        var result, r = null
 
         try {
             result = await database.getDb().collection("account").findOne(query)
@@ -100,8 +100,8 @@ router.post("/account_create", function(req, res) {
         } catch (err) {
             console.log("error")
         }
-        
-        if(r != null){
+
+        if (r != null) {
             parts["acc_err"] = "<span style='color:red'>Account already exists</span>"
             success = false
         }
@@ -110,20 +110,20 @@ router.post("/account_create", function(req, res) {
             parts["name_err"] = "<span style='color:red'>Name length isn't valid</span>"
             success = false
             res.statusCode = 400;
-        }else{
+        } else {
             if (result != null) {
-            parts["name_err"] = "<span style='color:red'>Name already exists</span>"
-            success = false
+                parts["name_err"] = "<span style='color:red'>Name already exists</span>"
+                success = false
 
             }
-        }  
-    
+        }
+
         if (req.body.password.length < 6 || req.body.password.length > 32) {
             parts["pass_err"] = "<span style='color:red'>Password length is not valid</span>"
             success = false
             res.statusCode = 400;
 
-        }      
+        }
 
         if (success) {
             let accountObj = {
@@ -148,16 +148,16 @@ router.post("/account_create", function(req, res) {
 
             }
         }
-        res.parts = {...res.parts, ...parts }
+        res.parts = { ...res.parts, ...parts }
         res.viewpath = './public/accountAdd.html'
         // console.log(res);
         await database.render(res)
-            // res.redirect(302, "/account_list")
+        // res.redirect(302, "/account_list")
     })()
 })
 
-router.get("/account_edit_:accountId", function(req, res) {
-    (async function() {
+router.get("/account_edit_:accountId", function (req, res) {
+    (async function () {
         var oid = new ObjectId(req.params["accountId"])
         var query = { "_id": oid }
         result = null
@@ -183,14 +183,14 @@ router.get("/account_edit_:accountId", function(req, res) {
             name_err: "Username must be from 3 - 32 characters",
             pass_err: "Password must be 6 - 32 characters"
         }
-        res.parts = {...res.parts, ...parts }
+        res.parts = { ...res.parts, ...parts }
         res.viewpath = './public/accountEdit.html'
         await database.render(res)
     })()
 })
 
-router.post("/account_edit_:accountId", function(req, res) {
-    (async function() {
+router.post("/account_edit_:accountId", function (req, res) {
+    (async function () {
         let success = true
         var oid = new ObjectId(req.params["accountId"])
         var query = { "_id": oid }
@@ -222,17 +222,19 @@ router.post("/account_edit_:accountId", function(req, res) {
         if (req.body.username.length < 3 || req.body.username.length > 32) {
             parts["name_err"] = "<span style='color:red'>Username length is not valid</span>"
             success = false
+            res.statusCode = 400;
         } else {
             var q = { "_id": { $ne: oid }, username: req.body.username }
             r = null
             try {
-                r = await database.getDb().collection("account").findOne(q)
+                r = await database.getDb().collection("account").findOne(q);
+                res.statusCode = 200;
             } catch (err) {
                 console.log("error")
             }
             if (r != null) {
                 parts["name_err"] = "<span style='color:red'>Username '" + req.body.username + "' has been used already</span>"
-                success = false
+                success = false;
             }
         }
         result["cardNo"] = req.body.cardNo
@@ -254,20 +256,24 @@ router.post("/account_edit_:accountId", function(req, res) {
             try {
                 await database.getDb().collection("account").updateOne(query, { $set: result })
                 parts["msg_style"] = ""
+                res.statusCode = 200;
+
             } catch (err) {
-                console.log(err)
+                console.log(err);
+                // res.statusCode = 400;
+
                 res.send("500 error updating db")
                 return;
             }
         }
-        res.parts = {...res.parts, ...parts }
+        res.parts = { ...res.parts, ...parts }
         res.viewpath = './public/accountEdit.html'
         await database.render(res)
     })()
 })
 
-router.get("/account_delete_:accountId", function(req, res) {
-    (async function() {
+router.get("/account_delete_:accountId", function (req, res) {
+    (async function () {
         var oid = new ObjectId(req.params["accountId"])
         var query = { "_id": oid }
         result = null

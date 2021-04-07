@@ -25,6 +25,7 @@ router.post("/login", async function(req, res) {
     }
     if (result == null) {
         p["msg"] = "<span style='color:red'>Incorrect username</span>";
+        res.statusCode = 400;
     } else {
         var dbpass = String(result["password"]);
         if (dbpass == req.body.password) {
@@ -38,8 +39,11 @@ router.post("/login", async function(req, res) {
             send_html = false;
         } else {
             p["msg"] = "<span style='color:red'>Incorrect password</span>";
+            res.statusCode = 400;
         }
     }
+
+    // console.log(res.statusCode);
     if (send_html) {
         res.parts = {...res.parts, ...p };
         res.viewpath = './public/login.html';

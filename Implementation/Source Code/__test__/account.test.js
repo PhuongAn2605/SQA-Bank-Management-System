@@ -1,6 +1,6 @@
 const request = require('supertest');
-const { app } = require('../../server.js');
-var database = require("../../database")
+const { app } = require('../server');
+var database = require("../database")
 
 
 const { MongoClient, ObjectId } = require('mongodb');
@@ -71,6 +71,7 @@ describe('TEST ACCOUNT', () => {
     expect(insertedAccount).toStrictEqual(mockAccount);
   });
 
+  //not done yet
   it("GET ACCOUNT-LIST", async () => {
     const response = await request(app).get('/account_list')
     // console.log(response);
@@ -80,6 +81,7 @@ describe('TEST ACCOUNT', () => {
 
   });
 
+  //not done yet
   it('GET ACCOUNT-CREATE', async () => {
     const response = await request(app).get('/account_create');
     // console.log(response);
@@ -100,6 +102,8 @@ describe('TEST ACCOUNT', () => {
 
         const insertTestAccount = await account.findOne({ cardNo: testAccount["cardNo"] });
         expect(insertTestAccount["cardNo"]).toStrictEqual(testAccount["cardNo"]);
+        expect(insertTestAccount.username).toStrictEqual(testAccount.username);
+        expect(insertTestAccount.phonenumber).toStrictEqual(testAccount.phonenumber);
 
         // done();
       });
@@ -227,7 +231,7 @@ describe('TEST ACCOUNT', () => {
       expect(response.statusCode).toEqual(200);
 
       const updateAccount = await account.findOne({_id: ObjectId(accountId)});
-      expect(updateAccount.username).toEqual(expect.stringMatching('Test'));
+      expect(updateAccount.username).toEqual(expect.stringMatching(testAccount.username));
       expect(updateAccount.cardNo).toEqual(testAccount.cardNo);
 
     });

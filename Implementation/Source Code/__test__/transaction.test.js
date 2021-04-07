@@ -1,6 +1,6 @@
 const request = require('supertest');
-const { app } = require('../../server.js');
-var database = require("../../database")
+const { app } = require('../server.js');
+var database = require("../database")
 
 
 const { MongoClient, ObjectId } = require('mongodb');
@@ -45,7 +45,7 @@ describe('TEST TRANSACTION', () => {
     await database.close();
   });
 
-  it('should insert a transaction into collection', async () => {
+  it('should insert a transaction into db', async () => {
     await transaction.insertOne(mockTransaction);
 
     const insertedTransaction = await transaction.findOne({ _id: mockTransaction["_id"] });
@@ -126,9 +126,14 @@ describe('TEST TRANSACTION', () => {
     })
   });
 
-  it("Should delete the account", async () => {
-    const response = await request(app).get("/account_delete_" + transactionId);
+  it("Should delete the transaction", async () => {
+    const response = await request(app).get("/transaction_delete_" + transactionId);
       expect(response.statusCode).toEqual(302);
+  });
+
+  it("Should return HTML as FUND TRANSFER LIST", () => {
+    const response = await request(app).get("/fund_transfer")
+    .expect(200)
   })
 
 
