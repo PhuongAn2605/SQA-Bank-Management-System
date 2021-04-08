@@ -5,17 +5,42 @@ var database = require("../database")
 
 const { MongoClient, ObjectId } = require('mongodb');
 const { MongoMemoryServer } = require('mongodb-memory-server');
+const { response } = require('express');
 
-let transactionId;
+
+const mockAccount1 = {
+  role: 'user',
+  cardNo: '12345678901238',
+  username: "PhuongZZZ",
+  password: "12345678",
+  address: "HD",
+  dob: "2000-09-08",
+  phone: "084834232",
+  email: "anphuong2605@gmail.com",
+  balance: "1000000"
+};
+
+const mockAccount2 = {
+  role: 'user',
+  cardNo: '12345678901234',
+  username: "Sarang",
+  password: "12345678",
+  address: "HD",
+  dob: "2000-09-08",
+  phone: "084834232",
+  email: "anphuong2605@gmail.com",
+  balance: "0"
+};
 
 let mockTransaction = {
-  receiver: "123456789123545",
-  receiver_name: "Phuong An",
+  // _id: "606e690ada5a593d8433073e",
+  receiver_number: "12345678901234",
+  receiver_name: "PhuongZZZ",
   bankName: "BIDV",
-  giver_number: "434745842235435",
-  giver: "AAA",
+  giver_number: "12345678901238",
+  giver_name: "Sarang",
   date: "2021-02-06",
-  amount: "2000000",
+  amount: "200000",
   status: "completed"
 };
 
@@ -28,6 +53,10 @@ function serialise(obj) {
 describe('TEST TRANSACTION', () => {
   let connection;
   let transaction;
+  let account;
+
+  let transactionId;
+let accountId1;
 
   beforeAll(async () => {
     mongo = new MongoMemoryServer();
@@ -35,6 +64,14 @@ describe('TEST TRANSACTION', () => {
     connection = await MongoClient.connect(mongoUri, {
       useNewUrlParser: true,
     });
+
+    account = await database.getDb().collection("account");
+    await account.deleteMany({});
+    await account.insertMany([mockAccount1, mockAccount2]);
+
+    const insertedAccount1 = await account.findOne({cardNo: mockAccount1.cardNo})
+    accountId1 = insertedAccount1._id;
+    
     transaction = await database.getDb().collection("transaction");
     await transaction.deleteMany({});
   });
@@ -46,11 +83,12 @@ describe('TEST TRANSACTION', () => {
   });
 
   it('should insert a transaction into db', async () => {
+    // console.log(mockTransaction);
     await transaction.insertOne(mockTransaction);
 
     const insertedTransaction = await transaction.findOne({ _id: mockTransaction["_id"] });
     // console.log(insertedTransaction);
-    expect(insertedTransaction).toStrictEqual(mockTransaction);
+    expect(insertedTransaction._id).toStrictEqual(mockTransaction._id);
   });
 
   it("Should return LIST OF TRANSACTION page", async () => {
@@ -69,13 +107,15 @@ describe('TEST TRANSACTION', () => {
 
   describe("POST TRANSACTION-CREATE", () => {
     it("Should add the transaction to db", async () => {
+      await transaction.deleteMany({});
 
       app.set('body', mockTransaction);
       const response = await request(app).post('/transaction_create')
         .send(serialise(mockTransaction));
       expect(response.statusCode).toEqual(200);
 
-      const insertTransaction = await transaction.findOne({ receiver_number: mockTransaction.receiver_number });
+      const insertTransaction = await transaction.findOne({ receiver_name: mockTransaction.receiver_name });
+      // console.log(insertTransaction);
       transactionId = insertTransaction._id;
       expect(insertTransaction.receiver_number).toStrictEqual(mockTransaction.receiver_number);
 
@@ -99,6 +139,7 @@ describe('TEST TRANSACTION', () => {
     it("Should update the transaction", async () => {
       mockTransaction.receiver_name = "Test";
       app.set('body', mockTransaction);
+      // console.log(transactionId);
 
       const response = await request(app).post("/transaction_edit_" + transactionId)
         .send(serialise(mockTransaction));
@@ -112,7 +153,7 @@ describe('TEST TRANSACTION', () => {
     })
 
     it("Should return cannot find the transaction with wrong id", async () => {
-      mockTransaction.receiver_name = "Test";
+      mockTransaction.receiver_name = "PhuongAn";
       testTransactionId = "606d82baf906162be8b6bd11";
       app.set('body', mockTransaction);
 
@@ -122,19 +163,41 @@ describe('TEST TRANSACTION', () => {
       // expect(response.status).toEqual(400);
       expect(updateTransaction).toBeNull();
       expect(response.text).toEqual(expect.stringContaining('cannot be found'));
+      // expect(updateTransaction.receiver_name).toEqual(mockTransaction.receiver_number);
 
     })
   });
 
-  it("Should delete the transaction", async () => {
-    const response = await request(app).get("/transaction_delete_" + transactionId);
+  describe("GET TRANSACTION-DELETE", () => {
+    it("Should delete the transaction", async () => {
+      const response = await request(app).get("/transaction_delete_" + transactionId);
       expect(response.statusCode).toEqual(302);
-  });
-
-  it("Should return HTML as FUND TRANSFER LIST", () => {
-    const response = await request(app).get("/fund_transfer")
-    .expect(200)
+    });
+    it("Shoud return status 400 due to wrong id", async () => {
+      testTransactionId = "606e703774e2ec6b18c34511";
+      const response = await request(app).get("/transaction_delete_" + testTransactionId)
+      expect(400);
+      // console.log(response);
+    })
   })
+
+  // it("Should return HTML as FUND TRANSFER LIST", async () => {
+  //   app.set("cookies", {
+  //     login: accountId1
+  //   })
+  //   console.log(accountId1);
+  //   const response = await request(app).get("/fund_transfer")
+  //     .expect(200)
+  // });
+
+  // describe("POST FUND-TRANSFER", async () => {
+  //   mockTransaction.receiver_name = "PhuongAn";
+  //   testTransactionId = "606d82baf906162be8b6bd11";
+  //   app.set('body', mockTransaction);
+
+  //   const response = await request(app).post("/fund_transfer");
+
+  // })
 
 
 });

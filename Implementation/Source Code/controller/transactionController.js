@@ -64,10 +64,10 @@ router.post("/transaction_create", function(req, res) {
         }
 
         let transactionObj = {
-            "receiver_number": req.body.receiver,
+            "receiver_number": req.body.receiver_number,
             "receiver_name": req.body.receiver_name,
             "bankName": "BIDV",
-            "giver_number": req.body.giver,
+            "giver_number": req.body.giver_number,
             "giver_name": req.body.giver_name,
             "date": Date.now(),
             "amount": req.body.amount,
@@ -145,9 +145,9 @@ router.post("/transaction_edit_:transactionId", function(req, res) {
             status: result["status"],
         }
 
-        result["receiver_number"] = req.body.receiver
+        result["receiver_number"] = req.body.receiver_number
         result["receiver_name"] = req.body.receiver_name
-        result["giver_number"] = req.body.giver
+        result["giver_number"] = req.body.giver_number
         result["giver_name"] = req.body.giver_name
         result["status"] = req.body.status
 
@@ -175,6 +175,7 @@ router.get("/transaction_delete_:transactionId", function(req, res) {
             result = await database.getDb().collection("transaction").deleteOne(query)
         } catch (err) {
             res.send("database error")
+            res.statusCode = 400;
             return;
         }
         res.redirect(302, "/transaction_list")

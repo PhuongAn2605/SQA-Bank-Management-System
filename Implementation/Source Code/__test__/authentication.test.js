@@ -5,9 +5,6 @@ var database = require("../database")
 
 const { MongoClient, ObjectId } = require('mongodb');
 const { MongoMemoryServer } = require('mongodb-memory-server');
-const { response } = require('express');
-// const { serialize } = require('node:v8');
-// const { read } = require('node:fs');
 
 let mockUser = {
     role: 'user',
@@ -21,10 +18,22 @@ let mockUser = {
     balance: "0"
 }
 
+let mockUserSignup = {
+    role: 'user',
+    cardNo: '1234567890002',
+    username: "Test",
+    password: "12345678",
+    address: "HN",
+    dob: "2000-09-08",
+    phone: "084834232",
+    email: "anphuong2605@gmail.com",
+    // balance: "0"
+}
+
 let mockAdmin = {
     username: "quocdat",
     password: "123456",
-    dbrole: "admin",
+    role: "admin",
     address: "HN",
     dob: "2000-09-08",
     phone: "084834232",
@@ -32,6 +41,9 @@ let mockAdmin = {
     cardNo: "1801040061",
     balance: "0"
 }
+
+let testUserId;
+let testAdminId;
 
 function serialise(obj) {
     return Object.keys(obj)
@@ -43,15 +55,21 @@ describe('TEST AUTHENTICATION', () => {
     let connection;
     let account;
 
-    beforeAll(async () => {
+    beforeAll(async done  => {
         mongo = new MongoMemoryServer();
         const mongoUri = await mongo.getUri();
         connection = await MongoClient.connect(mongoUri, {
             useNewUrlParser: true,
         });
         account = await database.getDb().collection("account");
+        await account.deleteMany({});
+        done();
         // window.document.cookie.login = "j%3A%22606c44f392060d1d88964c06%22";
     });
+
+    // afterEach(async () => {
+    //     await account.deleteMany({});
+    // })
 
     afterAll(async () => {
         await connection.close();
@@ -69,11 +87,16 @@ describe('TEST AUTHENTICATION', () => {
 
     //not done yet
     describe("LOGIN ADMIN", () => {
-        it("Admin logs in with valid username and password", async () => {
+        it("Login with valid username and password", async () => {
             await account.insertOne(mockAdmin);
 
             const insertedAccount = await account.findOne({ cardNo: mockAdmin["cardNo"] });
             expect(insertedAccount).toStrictEqual(mockAdmin);
+            expect(insertedAccount.cardNo).toEqual(mockAdmin.cardNo);
+            expect(insertedAccount.username).toEqual(mockAdmin.username);
+
+
+            testAdminId = insertedAccount._id;
 
             app.set('body', mockAdmin);
             let response = await request(app).post('/login')
@@ -86,8 +109,10 @@ describe('TEST AUTHENTICATION', () => {
 
             //     console.log(data.body._id)
         });
-        it("Admin login with invalid username, it should return an error", async () => {
+        it("Login with invalid username, it should return an error", async () => {
             mockAdmin.username = "";
+            // let query = { "_id": testAdminId };
+            // await account.updateOne(query, { $set: mockAdmin })
             app.set('body', mockAdmin);
             let response = await request(app).post('/login')
                 .send(serialise(mockAdmin));
@@ -96,57 +121,52 @@ describe('TEST AUTHENTICATION', () => {
             expect(response.statusCode).toEqual(400);
         });
 
-        it("Admin login with invalid password, it should return an error", async () => {
+        it("Login with invalid password, it should return an error", async () => {
             mockAdmin.password = "";
             mockAdmin.username = "quocdat";
             app.set('body', mockAdmin);
             let response = await request(app).post('/login')
                 .send(serialise(mockAdmin));
             // console.log(response.text);
+            expect(400);
             expect(response.text).toEqual(expect.stringContaining('Incorrect password'));
         });
 
-        it("Admin login with wrong password, it should return an error", async () => {
+        it("Login with wrong password, it should return an error", async () => {
             mockAdmin.password = "632763";
             mockAdmin.username = "quocdat";
             app.set('body', mockAdmin);
             let response = await request(app).post('/login')
                 .send(serialise(mockAdmin));
             // console.log(response.text);
+            expect(400);
             expect(response.text).toEqual(expect.stringContaining('Incorrect password'));
         });
     });
 
     //not done yet
     describe("POST LOGIN USER", () => {
-        it("Loin with valid information", async () => {
-
-            // const mockAccount = {
-            //     role: 'user',
-            //     cardNo: '1234567890000',
-            //     username: "Test-login",
-            //     password: "12345678",
-            //     address: "HN",
-            //     dob: "2000-09-08",
-            //     phone: "084834232",
-            //     email: "anphuong2605@gmail.com",
-            //     balance: "0"
-            // };
+        it("Login with valid information", async () => {
             await account.insertOne(mockUser);
 
             const insertedUser = await account.findOne({ cardNo: mockUser["cardNo"] });
-            expect(insertedUser).toStrictEqual(mockUser);
+            expect(insertedUser.username).toStrictEqual(mockUser.username);
+            expect(insertedUser.cardNo).toStrictEqual(mockUser.cardNo);
 
+
+            testUserId = insertedUser._id;
 
             app.set('body', mockUser);
             let response = await request(app).post('/login')
                 .send(serialise(mockUser))
                 //    expect('Content-Type', /json/)
                 .expect(302);
+            // await account.deleteMany({});
         })
 
         it("Login with invalid username", async () => {
             mockUser.username = "";
+
             app.set('body', mockUser);
             let response = await request(app).post('/login')
                 .send(serialise(mockUser));
@@ -154,6 +174,8 @@ describe('TEST AUTHENTICATION', () => {
             //  console.log(response.text);
             expect(400);
             expect(response.text).toEqual(expect.stringContaining('Incorrect username'));
+            // await account.deleteMany({});
+
         });
 
         it("Login with wrong username", async () => {
@@ -165,18 +187,22 @@ describe('TEST AUTHENTICATION', () => {
             //  console.log(response.text);
             expect(400);
             expect(response.text).toEqual(expect.stringContaining('Incorrect username'));
+            // await account.deleteMany({});
+
         });
 
         it("Login with invalid password", async () => {
             mockUser.username = "quocdat";
             mockUser.password = "12";
             app.set('body', mockUser);
+            // console.log(mockUser);
             let response = await request(app).post('/login')
                 .send(serialise(mockUser));
             // console.log(data);
             //  console.log(response.text);
             expect(400);
             expect(response.text).toEqual(expect.stringContaining('Incorrect password'));
+
         })
     })
 
@@ -192,14 +218,6 @@ describe('TEST AUTHENTICATION', () => {
         expect(response.statusCode).toBe(200);
     });
 
-    //  it("GET USER", async () => {
-    //     let query = { "_id": new ObjectId("606c28459e5f923888fb2bb7")};
-    //     console.log(query);
-    //     let user = await User.findOne({query});
-    //    console.log(user);
-    //     let data = await request(app).get('/user')
-    //     .send(query);
-    //  })
 
     it("GET SIGN UP", async () => {
         const response = await request(app).get('/sign_up');
@@ -207,23 +225,60 @@ describe('TEST AUTHENTICATION', () => {
         expect(response.statusCode).toBe(200);
     });
 
-    // test("POST SIGN UP", async () => {
-    //     return await request(app).post('/sign_up')
-    //     .send({
-    //         role: 'user', 
-    //         cardNo: '123456789012356',
-    //         username: "PhuongAA",
-    //         password: "12345678",
-    //         address: "HD",
-    //         dob: "2000-09-08",
-    //         phone: "084834232",
-    //         email: "anphuong2605@gmail.com",
-    //         balance: "0"
+    describe("POST SIGN-UP", () => {
+        it("Should return return status 201 - OK", async () => {
+            app.set('body', mockUserSignup);
+            const response = await request(app).post("/sign_up")
+            .send(serialise(mockUserSignup));
+            expect(response.status).toEqual(201);
+            // console.log(response);
+        });
+
+        it("Should return an error and status 400- BAD REQUEST due to invalid username", async () => {
+            mockUserSignup.username ="PP";
+            app.set('body', mockUserSignup);
+            const response = await request(app).post("/sign_up")
+            .send(serialise(mockUserSignup));
+            expect(response.statusCode).toEqual(400);
+            expect(response.text).toEqual(expect.stringContaining("Name length isn't valid"));
+            // console.log(response);
+        });
+
+        it("Should return an error and status 400- BAD REQUEST due to exsiting username", async () => {
+            mockUserSignup.username ="quocdat";
+            app.set('body', mockUserSignup);
+            const response = await request(app).post("/sign_up")
+            .send(serialise(mockUserSignup));
+            expect(response.statusCode).toEqual(400);
+            expect(response.text).toEqual(expect.stringContaining("Name already existed"));
+            // console.log(response);
+        });
+
+        it("Should return an error and status 400- BAD REQUEST due to invalid password", async () => {
+            mockUserSignup.username ="Test";
+            mockUserSignup.password = "aa";
+            app.set('body', mockUserSignup);
+            const response = await request(app).post("/sign_up")
+            .send(serialise(mockUserSignup));
+            expect(response.statusCode).toEqual(400);
+            expect(response.text).toEqual(expect.stringContaining("Password length is not valid"));
+            // console.log(response);
+        });
+
+    });
+
+    // describe("GET PROFILE", () => {
+
+
+    //     it("Should retun Profile page", async () => {
+    //         let testLogin = {
+    //             login: testUserId
+    //         }
+    //         app.set('cookies', testLogin);
+    //         const response = await request(app).get('/profile')
+    //         .send(testLogin)
     //     })
-    //     .expect(200)
-    //     // console.log(response);
-    //     // expect(response.statusCode).toBe(200);
-    // });
+    // })
 
     it("GET SIGN OUT", async () => {
         const response = await request(app).get('/sign_out');

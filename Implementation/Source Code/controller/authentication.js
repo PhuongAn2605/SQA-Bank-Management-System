@@ -110,6 +110,7 @@ router.post("/sign_up", function(req, res) {
         if (req.body.username.length < 3 || req.body.username.length > 32) {
             parts["name_err"] = "<span style='color:red'>Name length isn't valid</span>"
             success = false
+            res.statusCode = 400;
         } else {
             try {
                 result = await database.getDb().collection("account").findOne(query)
@@ -117,13 +118,15 @@ router.post("/sign_up", function(req, res) {
                 console.log("error")
             }
             if (result != null) {
-                parts["name_err"] = "<span style='color:red'>Name already exists</span>"
+                parts["name_err"] = "<span style='color:red'>Name already existed</span>"
                 success = false
+                res.statusCode = 400;
             }
         }
         if (req.body.password.length < 6 || req.body.password.length > 32) {
             parts["pass_err"] = "<span style='color:red'>Password length is not valid</span>"
-            success = false
+            success = false,
+            res.statusCode = 400;
         }
         if (success) {
             let accountObj = {
@@ -140,6 +143,7 @@ router.post("/sign_up", function(req, res) {
             try {
                 await database.getDb().collection("account").insertOne(accountObj)
                 parts["msg_style"] = ""
+                res.statusCode = 201;
             } catch (err) {
                 console.log(err)
                 res.send("500 errors inserting to db")
