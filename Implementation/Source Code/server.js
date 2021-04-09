@@ -56,9 +56,9 @@ app.get("/admin", function(req, res) {
     res.redirect(302, "/user_list");
 })
 
-app.listen(5000)
+app.listen(5000);
 // module.export={
 //     app
 // }
 
-module.exports = {app};
+module.exports = { app };

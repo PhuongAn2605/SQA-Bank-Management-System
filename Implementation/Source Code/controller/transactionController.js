@@ -31,6 +31,7 @@ router.get("/transaction_list", function(req, res) {
         let parts = { tb: tbtext }
         res.parts = {...res.parts, ...parts }
         res.viewpath = './public/transactionList.html'
+        // res.statusCode = 200;
         await database.render(res)
     })()
 })
@@ -38,10 +39,10 @@ router.get("/transaction_list", function(req, res) {
 router.get("/transaction_create", function(req, res) {
     (async function() {
         let parts = {
-            receiver_cardNo: "",
-            receiverName: "",
-            giver_cardNo: "",
-            giverName: "",
+            receiver_number: "",
+            receiver_name: "",
+            giver_number: "",
+            giver_name: "",
             amount: "",
             status: ""
         }
@@ -54,29 +55,31 @@ router.get("/transaction_create", function(req, res) {
 router.post("/transaction_create", function(req, res) {
     (async function() {
         let parts = {
-            receiver_cardNo: "",
-            receiverName: "",
-            giver_cardNo: "",
-            giverName: "",
+            receiver_number: "",
+            receiver_name: "",
+            giver_number: "",
+            giver_name: "",
             amount: "",
             status: ""
         }
 
         let transactionObj = {
-            "receiver_number": req.body.receiver,
-            "receiver_name": req.body.receiverName,
+            "receiver_number": req.body.receiver_number,
+            "receiver_name": req.body.receiver_name,
             "bankName": "BIDV",
-            "giver_number": req.body.giver,
-            "giver_name": req.body.giverName,
+            "giver_number": req.body.giver_number,
+            "giver_name": req.body.giver_name,
             "date": Date.now(),
             "amount": req.body.amount,
             "status": req.body.status,
         }
         try {
             await database.getDb().collection("transaction").insertOne(transactionObj)
+            res.statusCode = 200;
         } catch (err) {
             console.log(err)
-            res.send("500 errors inserting to db")
+            res.send("500 errors inserting to db");
+            res.statusCode = 400;
         }
 
 
@@ -98,19 +101,21 @@ router.get("/transaction_edit_:transactionId", function(req, res) {
             console.log("error")
         }
         if (result == null) {
-            res.send("transaction with id '" + req.params["transactionId"] + "' cannot be found!")
+            res.send("transaction with id '" + req.params["transactionId"] + "' cannot be found!");
+            res.statusCode = 400;
             return;
         }
         let parts = {
             transactionId: req.params["transactionId"],
-            receiver_cardNo: result["receiver_number"],
-            receiverName: result["receiver_name"],
-            giver_cardNo: result["giver_number"],
-            giverName: result["giver_name"],
+            receiver_number: result["receiver_number"],
+            receiver_name: result["receiver_name"],
+            giver_number: result["giver_number"],
+            giver_name: result["giver_name"],
             status: result["status"],
         }
         res.parts = {...res.parts, ...parts }
         res.viewpath = './public/transactionEdit.html'
+        // res.statusCode = 200;
         await database.render(res)
     })()
 })
@@ -133,17 +138,17 @@ router.post("/transaction_edit_:transactionId", function(req, res) {
 
         let parts = {
             transactionId: req.params["transactionId"],
-            receiver_cardNo: result["receiver_number"],
-            receiverName: result["receiver_name"],
-            giver_cardNo: result["giver_number"],
-            giverName: result["giver_name"],
+            receiver_number: result["receiver_number"],
+            receiver_name: result["receiver_name"],
+            giver_number: result["giver_number"],
+            giver_name: result["giver_name"],
             status: result["status"],
         }
 
-        result["receiver_number"] = req.body.receiver
-        result["receiver_name"] = req.body.receiverName
-        result["giver_number"] = req.body.giver
-        result["giver_number"] = req.body.giverName
+        result["receiver_number"] = req.body.receiver_number
+        result["receiver_name"] = req.body.receiver_name
+        result["giver_number"] = req.body.giver_number
+        result["giver_name"] = req.body.giver_name
         result["status"] = req.body.status
 
         if (success) {
@@ -170,6 +175,7 @@ router.get("/transaction_delete_:transactionId", function(req, res) {
             result = await database.getDb().collection("transaction").deleteOne(query)
         } catch (err) {
             res.send("database error")
+            res.statusCode = 400;
             return;
         }
         res.redirect(302, "/transaction_list")
@@ -241,7 +247,7 @@ router.get("/fund_transfer", async function(req, res) {
         console.log("error");
     }
     let parts = {
-        receiver_cardNo: "",
+        receiver_number: "",
         amount: "",
         balance_value: objUser["balance"],
         user_name: objUser["username"]
@@ -267,7 +273,7 @@ router.post("/fund_transfer", async function(req, res) {
     }
 
     let parts = {
-        receiver_cardNo: "",
+        receiver_number: "",
         amount: "",
         balance_value: giver["balance"],
         user_name: giver["username"]
