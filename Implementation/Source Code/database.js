@@ -7,12 +7,11 @@ class Database {
 
     constructor() {
         var self = this
-        MongoClient.connect("mongodb://localhost:27017/", { useUnifiedTopology: true }, function(err, client) {
+        MongoClient.connect("mongodb+srv://sadin:Quocdat@123@cluster0.ckwoi.mongodb.net/SQA?retryWrites=true&w=majority", { useUnifiedTopology: true }, function(err, client) {
             if (err) throw err
             self._dbo = client.db("SQA") // select the database
             console.log("DB connected!")
         })
-        // this.connect(self)
     }
 
     getDb() {

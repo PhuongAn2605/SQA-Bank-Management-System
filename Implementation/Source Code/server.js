@@ -1,12 +1,11 @@
-
 var express = require("express")
 var bodyParser = require("body-parser")
 var cookieParser = require('cookie-parser')
-var ObjectId = require("mongodb").ObjectID
 var app = express()
 var authController = require("./controller/authentication")
 var accController = require("./controller/accountController")
 var tranController = require("./controller/transactionController")
+var PORT = process.env.PORT || 5000;
 
 // middlewares
 app.use(bodyParser.urlencoded({ extended: false })) // enable req.body
@@ -56,7 +55,7 @@ app.get("/admin", function(req, res) {
     res.redirect(302, "/user_list");
 })
 
-app.listen(5000);
+app.listen(PORT);
 // module.export={
 //     app
 // }

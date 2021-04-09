@@ -25,12 +25,16 @@
     },
     "scripts": {
         "test": "jest --watchAll --no-cache",
-        "start": "nodemon server.js"
+        "start": "node server.js",
+        "dev": "nodemon server.js"
     },
     "jest": {
         "preset": "@shelf/jest-mongodb",
         "testEnvironment": "node"
     },
     "author": "sadino",
-    "license": "ISC"
+    "license": "ISC",
+    "engines": {
+        "node": "12.18.4"
+    }
 }
