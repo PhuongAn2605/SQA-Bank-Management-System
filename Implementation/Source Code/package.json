@@ -30,6 +30,6 @@
         "preset": "@shelf/jest-mongodb",
         "testEnvironment": "node"
     },
-    "author": "",
+    "author": "sadino",
     "license": "ISC"
 }

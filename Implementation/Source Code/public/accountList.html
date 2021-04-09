@@ -45,15 +45,15 @@
         <div class="form-group row">
             <label for="inputZip" class="col-sm-3 col-form-label">Search by account number</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="inputAccount" min="1">
+                <input type="text" onkeyup="search()" class="form-control" id="inputAccount">
             </div>
             <!-- <label for="inputZip" class="col-sm-2 col-form-label">tr</label> -->
-            <form class="d-flex col-sm-1">
+            <!-- <form class="d-flex col-sm-1">
                 <button class="btn btn-outline-success" id="btn-search" type="submit">Search</button>
-            </form>
+            </form> -->
         </div>
         <br>
-        <table class="table table-bordered table-striped">
+        <table class="table table-bordered table-striped" id="myTable">
             <thead class="thead-dark">
                 <tr>
                     <th scope="col">No.</th>
@@ -67,7 +67,6 @@
                     <th scope="col">Balance</th>
                     <th scope="col"></th>
                     <th scope="col"></th>
-
                 </tr>
             </thead>
             <tbody>
@@ -80,6 +79,28 @@
             var r = confirm("Are you sure you want to delete?")
             if (r) {
                 window.location.href = '/account_delete_' + uid
+            }
+        }
+
+        function search() {
+            // Declare variables
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("inputAccount");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
             }
         }
     </script>
