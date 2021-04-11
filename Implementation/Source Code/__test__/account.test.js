@@ -66,12 +66,11 @@ describe('TEST ACCOUNT', () => {
 
     const insertedAccount = await account.findOne({ cardNo: mockAccount["cardNo"] });
     // console.log(insertedAccount);
-    accountId = String(insertedAccount._id);
+    // accountId = String(insertedAccount._id);
     // console.log( " PHUONG" + accountId);
     expect(insertedAccount).toStrictEqual(mockAccount);
   });
 
-  //not done yet
   it("GET ACCOUNT-LIST", async () => {
     const response = await request(app).get('/account_list')
     // console.log(response);
@@ -101,6 +100,9 @@ describe('TEST ACCOUNT', () => {
         expect(response.statusCode).toEqual(201);
 
         const insertTestAccount = await account.findOne({ cardNo: testAccount["cardNo"] });
+
+        accountId = String(insertTestAccount._id);
+
         expect(insertTestAccount["cardNo"]).toStrictEqual(testAccount["cardNo"]);
         expect(insertTestAccount.username).toStrictEqual(testAccount.username);
         expect(insertTestAccount.phonenumber).toStrictEqual(testAccount.phonenumber);
@@ -221,6 +223,9 @@ describe('TEST ACCOUNT', () => {
       expect(response.type).toEqual(expect.stringMatching('text/html'));
 
     });
+  });
+
+  describe("POST ACCOUNT-EDIT", () => {
     it("Should update the account", async () => {
       // console.log(accountId);
       testAccount.username = "Test";
@@ -235,7 +240,70 @@ describe('TEST ACCOUNT', () => {
       expect(updateAccount.cardNo).toEqual(testAccount.cardNo);
 
     });
-  });
+
+    it("Should return the error - Account with the id can not be found", async () => {
+      // console.log(accountId);
+      // testAccount.username = "Test";
+      let testUserId = "6070f5accf05e567f83576c2";
+      // app.set('body', testAccount);
+      // console.log(" PARAM " + request.params);
+      const response = await request(app).post("/account_edit_" + testUserId)
+      // .send(serialise(testAccount))
+
+      const updateAccount = await account.findOne({_id: ObjectId(testUserId)});
+      expect(updateAccount).toBeNull();
+      expect(response.statusCode).toEqual(400);
+      expect(response.text).toEqual(expect.stringContaining("Account with id"));
+      expect(response.text).toEqual(expect.stringContaining("cannot be found!"));
+
+    });
+
+    it("Should return the error - Username length is not valid", async () => {
+      // console.log(accountId);
+      testAccount.username = "PP";
+      app.set('body', testAccount);
+      // console.log(" PARAM " + request.params);
+      const response = await request(app).post("/account_edit_" + accountId)
+      .send(serialise(testAccount))
+      // expect(response.statusCode).toEqual(200);
+
+      const updateAccount = await account.findOne({_id: ObjectId(accountId)});
+      expect(updateAccount.cardNo).toEqual(testAccount.cardNo)
+      expect(response.statusCode).toEqual(400);
+      expect(response.text).toEqual(expect.stringContaining("Username length is not valid"));
+    });
+
+    it("Should return error Username has been used already", async () => {
+      // console.log(accountId);
+      testAccount.username = "Phuongzz";
+      app.set('body', testAccount);
+      // console.log(" PARAM " + request.params);
+      const response = await request(app).post("/account_edit_" + accountId)
+      .send(serialise(testAccount))
+      // expect(response.statusCode).toEqual(200);
+
+      // const updateAccount = await account.findOne({_id: ObjectId(accountId)});
+      // expect(updateAccount.cardNo).toEqual(testAccount.cardNo)
+      expect(response.statusCode).toEqual(400);
+      expect(response.text).toEqual(expect.stringContaining("has been used already"));
+    });
+
+    it("Should return the error - Password length is not valid", async () => {
+      // console.log(accountId);
+      testAccount.username = "Test";
+      testAccount.password = "12";
+      app.set('body', testAccount);
+      // console.log(" PARAM " + request.params);
+      const response = await request(app).post("/account_edit_" + accountId)
+      .send(serialise(testAccount))
+      // expect(response.statusCode).toEqual(200);
+
+      // const updateAccount = await account.findOne({_id: ObjectId(accountId)});
+      // expect(updateAccount.cardNo).toEqual(testAccount.cardNo)
+      expect(response.statusCode).toEqual(400);
+      expect(response.text).toEqual(expect.stringContaining("Password length is not valid"));
+    });
+  })
 
   describe("GET ACCOUNT-DELETE", () => {
     it("Should delete the account", async () => {

@@ -158,6 +158,13 @@ router.post("/sign_up", function(req, res) {
 
 router.get("/profile", async function(req, res) {
     var uid = req.cookies["login"];
+    // console.log(req);
+    // console.log(Cookie.get("login"));
+    // console.log(uid);
+    // console.log(req.cookies.login);
+    // console.log(document.cookie);
+
+
     var oid = new ObjectId(uid);
     var query = { "_id": oid };
     objUser = null;

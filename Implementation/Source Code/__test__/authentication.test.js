@@ -1,6 +1,7 @@
 const request = require('supertest');
 const { app } = require('../server.js');
-var database = require("../database")
+var database = require("../database");
+
 
 
 const { MongoClient, ObjectId } = require('mongodb');
@@ -86,203 +87,234 @@ describe('TEST AUTHENTICATION', () => {
     });
 
     //not done yet
-    describe("LOGIN ADMIN", () => {
-        it("Login with valid username and password", async () => {
-            await account.insertOne(mockAdmin);
+    // describe("LOGIN ADMIN", () => {
+    //     it("Login with valid username and password", async () => {
+    //         await account.insertOne(mockAdmin);
 
-            const insertedAccount = await account.findOne({ cardNo: mockAdmin["cardNo"] });
-            expect(insertedAccount).toStrictEqual(mockAdmin);
-            expect(insertedAccount.cardNo).toEqual(mockAdmin.cardNo);
-            expect(insertedAccount.username).toEqual(mockAdmin.username);
-
-
-            testAdminId = insertedAccount._id;
-
-            app.set('body', mockAdmin);
-            let response = await request(app).post('/login')
-                .send(serialise(mockAdmin))
-                .expect(302);
-
-            // const response = request(app).get('/account_list')
-            //     .set("Cookie", data.body._id)
-            //     .expect(201);
-
-            //     console.log(data.body._id)
-        });
-        it("Login with invalid username, it should return an error", async () => {
-            mockAdmin.username = "";
-            // let query = { "_id": testAdminId };
-            // await account.updateOne(query, { $set: mockAdmin })
-            app.set('body', mockAdmin);
-            let response = await request(app).post('/login')
-                .send(serialise(mockAdmin));
-            // console.log(response.text);
-            expect(response.text).toEqual(expect.stringContaining('Incorrect username'));
-            expect(response.statusCode).toEqual(400);
-        });
-
-        it("Login with invalid password, it should return an error", async () => {
-            mockAdmin.password = "";
-            mockAdmin.username = "quocdat";
-            app.set('body', mockAdmin);
-            let response = await request(app).post('/login')
-                .send(serialise(mockAdmin));
-            // console.log(response.text);
-            expect(400);
-            expect(response.text).toEqual(expect.stringContaining('Incorrect password'));
-        });
-
-        it("Login with wrong password, it should return an error", async () => {
-            mockAdmin.password = "632763";
-            mockAdmin.username = "quocdat";
-            app.set('body', mockAdmin);
-            let response = await request(app).post('/login')
-                .send(serialise(mockAdmin));
-            // console.log(response.text);
-            expect(400);
-            expect(response.text).toEqual(expect.stringContaining('Incorrect password'));
-        });
-    });
-
-    //not done yet
-    describe("POST LOGIN USER", () => {
-        it("Login with valid information", async () => {
-            await account.insertOne(mockUser);
-
-            const insertedUser = await account.findOne({ cardNo: mockUser["cardNo"] });
-            expect(insertedUser.username).toStrictEqual(mockUser.username);
-            expect(insertedUser.cardNo).toStrictEqual(mockUser.cardNo);
+    //         const insertedAccount = await account.findOne({ cardNo: mockAdmin["cardNo"] });
+    //         expect(insertedAccount).toStrictEqual(mockAdmin);
+    //         expect(insertedAccount.cardNo).toEqual(mockAdmin.cardNo);
+    //         expect(insertedAccount.username).toEqual(mockAdmin.username);
 
 
-            testUserId = insertedUser._id;
+    //         testAdminId = insertedAccount._id;
 
-            app.set('body', mockUser);
-            let response = await request(app).post('/login')
-                .send(serialise(mockUser))
-                //    expect('Content-Type', /json/)
-                .expect(302);
-            // await account.deleteMany({});
-        })
+    //         app.set('body', mockAdmin);
+    //         let response = await request(app).post('/login')
+    //             .send(serialise(mockAdmin))
+    //             .expect(302);
 
-        it("Login with invalid username", async () => {
-            mockUser.username = "";
+    //         // const response = request(app).get('/account_list')
+    //         //     .set("Cookie", data.body._id)
+    //         //     .expect(201);
 
-            app.set('body', mockUser);
-            let response = await request(app).post('/login')
-                .send(serialise(mockUser));
-            // console.log(data);
-            //  console.log(response.text);
-            expect(400);
-            expect(response.text).toEqual(expect.stringContaining('Incorrect username'));
-            // await account.deleteMany({});
+    //         //     console.log(data.body._id)
+    //     });
+    //     it("Login with invalid username, it should return an error", async () => {
+    //         mockAdmin.username = "";
+    //         // let query = { "_id": testAdminId };
+    //         // await account.updateOne(query, { $set: mockAdmin })
+    //         app.set('body', mockAdmin);
+    //         let response = await request(app).post('/login')
+    //             .send(serialise(mockAdmin));
+    //         // console.log(response.text);
+    //         expect(response.text).toEqual(expect.stringContaining('Incorrect username'));
+    //         expect(response.statusCode).toEqual(400);
+    //     });
 
-        });
+    //     it("Login with invalid password, it should return an error", async () => {
+    //         mockAdmin.password = "";
+    //         mockAdmin.username = "quocdat";
+    //         app.set('body', mockAdmin);
+    //         let response = await request(app).post('/login')
+    //             .send(serialise(mockAdmin));
+    //         // console.log(response.text);
+    //         expect(400);
+    //         expect(response.text).toEqual(expect.stringContaining('Incorrect password'));
+    //     });
 
-        it("Login with wrong username", async () => {
-            mockUser.username = "phuongan";
-            app.set('body', mockUser);
-            let response = await request(app).post('/login')
-                .send(serialise(mockUser));
-            // console.log(data);
-            //  console.log(response.text);
-            expect(400);
-            expect(response.text).toEqual(expect.stringContaining('Incorrect username'));
-            // await account.deleteMany({});
+    //     it("Login with wrong password, it should return an error", async () => {
+    //         mockAdmin.password = "632763";
+    //         mockAdmin.username = "quocdat";
+    //         app.set('body', mockAdmin);
+    //         let response = await request(app).post('/login')
+    //             .send(serialise(mockAdmin));
+    //         // console.log(response.text);
+    //         expect(400);
+    //         expect(response.text).toEqual(expect.stringContaining('Incorrect password'));
+    //     });
+    // });
 
-        });
+    // //not done yet
+    // describe("POST LOGIN USER", () => {
+    //     it("Login with valid information", async () => {
+    //         await account.insertOne(mockUser);
 
-        it("Login with invalid password", async () => {
-            mockUser.username = "quocdat";
-            mockUser.password = "12";
-            app.set('body', mockUser);
-            // console.log(mockUser);
-            let response = await request(app).post('/login')
-                .send(serialise(mockUser));
-            // console.log(data);
-            //  console.log(response.text);
-            expect(400);
-            expect(response.text).toEqual(expect.stringContaining('Incorrect password'));
-
-        })
-    })
-
-    it("GET HOMEPAGE", async () => {
-        const response = await request(app).get('/home_page');
-        // console.log(response)
-        expect(response.statusCode).toBe(200);
-    });
-
-    it("GET ADMIN", async () => {
-        const response = await request(app).get('/admin');
-        // console.log(response)
-        expect(response.statusCode).toBe(200);
-    });
+    //         const insertedUser = await account.findOne({ cardNo: mockUser["cardNo"] });
+    //         expect(insertedUser.username).toStrictEqual(mockUser.username);
+    //         expect(insertedUser.cardNo).toStrictEqual(mockUser.cardNo);
 
 
-    it("GET SIGN UP", async () => {
-        const response = await request(app).get('/sign_up');
-        // console.log(response);
-        expect(response.statusCode).toBe(200);
-    });
+    //         testUserId = insertedUser._id;
 
-    describe("POST SIGN-UP", () => {
-        it("Should return return status 201 - OK", async () => {
-            app.set('body', mockUserSignup);
-            const response = await request(app).post("/sign_up")
-            .send(serialise(mockUserSignup));
-            expect(response.status).toEqual(201);
-            // console.log(response);
-        });
-
-        it("Should return an error and status 400- BAD REQUEST due to invalid username", async () => {
-            mockUserSignup.username ="PP";
-            app.set('body', mockUserSignup);
-            const response = await request(app).post("/sign_up")
-            .send(serialise(mockUserSignup));
-            expect(response.statusCode).toEqual(400);
-            expect(response.text).toEqual(expect.stringContaining("Name length isn't valid"));
-            // console.log(response);
-        });
-
-        it("Should return an error and status 400- BAD REQUEST due to exsiting username", async () => {
-            mockUserSignup.username ="quocdat";
-            app.set('body', mockUserSignup);
-            const response = await request(app).post("/sign_up")
-            .send(serialise(mockUserSignup));
-            expect(response.statusCode).toEqual(400);
-            expect(response.text).toEqual(expect.stringContaining("Name already existed"));
-            // console.log(response);
-        });
-
-        it("Should return an error and status 400- BAD REQUEST due to invalid password", async () => {
-            mockUserSignup.username ="Test";
-            mockUserSignup.password = "aa";
-            app.set('body', mockUserSignup);
-            const response = await request(app).post("/sign_up")
-            .send(serialise(mockUserSignup));
-            expect(response.statusCode).toEqual(400);
-            expect(response.text).toEqual(expect.stringContaining("Password length is not valid"));
-            // console.log(response);
-        });
-
-    });
-
-    // describe("GET PROFILE", () => {
-
-
-    //     it("Should retun Profile page", async () => {
-    //         let testLogin = {
-    //             login: testUserId
-    //         }
-    //         app.set('cookies', testLogin);
-    //         const response = await request(app).get('/profile')
-    //         .send(testLogin)
+    //         app.set('body', mockUser);
+    //         let response = await request(app).post('/login')
+    //             .send(serialise(mockUser))
+    //             //    expect('Content-Type', /json/)
+    //             expect(response.statusCode).toEqual(302);
+    //         // await account.deleteMany({});
     //     })
+
+    //     it("Login with invalid username", async () => {
+    //         mockUser.username = "";
+
+    //         app.set('body', mockUser);
+    //         let response = await request(app).post('/login')
+    //             .send(serialise(mockUser));
+    //         // console.log(data);
+    //         //  console.log(response.text);
+    //         expect(400);
+    //         expect(response.text).toEqual(expect.stringContaining('Incorrect username'));
+    //         // await account.deleteMany({});
+
+    //     });
+
+    //     it("Login with wrong username", async () => {
+    //         mockUser.username = "phuongan";
+    //         app.set('body', mockUser);
+    //         let response = await request(app).post('/login')
+    //             .send(serialise(mockUser));
+    //         // console.log(data);
+    //         //  console.log(response.text);
+    //         expect(400);
+    //         expect(response.text).toEqual(expect.stringContaining('Incorrect username'));
+    //         // await account.deleteMany({});
+
+    //     });
+
+    //     it("Login with invalid password", async () => {
+    //         mockUser.username = "Test-login";
+    //         mockUser.password = "12";
+    //         app.set('body', mockUser);
+    //         // console.log(mockUser);
+    //         let response = await request(app).post('/login')
+    //             .send(serialise(mockUser));
+    //         // console.log(data);
+    //         //  console.log(response.text);
+    //         expect(400);
+    //         expect(response.text).toEqual(expect.stringContaining('Incorrect password'));
+
+    //     });
+
+    //     it("Login with invalid password and username", async () => {
+    //         mockUser.username = "phuongan";
+    //         mockUser.password = "12454";
+    //         app.set('body', mockUser);
+    //         // console.log(mockUser);
+    //         let response = await request(app).post('/login')
+    //             .send(serialise(mockUser));
+    //         // console.log(data);
+    //         //  console.log(response.text);
+    //         expect(400);
+    //         expect(response.text).toEqual(expect.stringContaining('Incorrect username'));
+
+    //     });
     // })
 
-    it("GET SIGN OUT", async () => {
-        const response = await request(app).get('/sign_out');
-        // console.log(response);
-        expect(response.statusCode).toBe(302);
-    });
+    // it("GET HOMEPAGE", async () => {
+    //     const response = await request(app).get('/home_page');
+    //     // console.log(response)
+    //     expect(response.statusCode).toBe(200);
+    // });
+
+    // it("GET ADMIN", async () => {
+    //     const response = await request(app).get('/admin');
+    //     // console.log(response)
+    //     expect(response.statusCode).toBe(200);
+    // });
+
+
+    // it("GET SIGN UP", async () => {
+    //     const response = await request(app).get('/sign_up');
+    //     // console.log(response);
+    //     expect(response.statusCode).toBe(200);
+    // });
+
+    // describe("POST SIGN-UP", () => {
+    //     it("Should return return status 201 - OK", async () => {
+    //         app.set('body', mockUserSignup);
+    //         const response = await request(app).post("/sign_up")
+    //         .send(serialise(mockUserSignup));
+    //         expect(response.status).toEqual(201);
+    //         // console.log(response);
+    //     });
+
+    //     it("Should return an error and status 400- BAD REQUEST due to invalid username", async () => {
+    //         mockUserSignup.username ="PP";
+    //         app.set('body', mockUserSignup);
+    //         const response = await request(app).post("/sign_up")
+    //         .send(serialise(mockUserSignup));
+    //         expect(response.statusCode).toEqual(400);
+    //         expect(response.text).toEqual(expect.stringContaining("Name length isn't valid"));
+    //         // console.log(response);
+    //     });
+
+    //     it("Should return an error and status 400- BAD REQUEST due to exsiting username", async () => {
+    //         mockUserSignup.username ="quocdat";
+    //         app.set('body', mockUserSignup);
+    //         const response = await request(app).post("/sign_up")
+    //         .send(serialise(mockUserSignup));
+    //         expect(response.statusCode).toEqual(400);
+    //         expect(response.text).toEqual(expect.stringContaining("Name already existed"));
+    //         // console.log(response);
+    //     });
+
+    //     it("Should return an error and status 400- BAD REQUEST due to invalid password", async () => {
+    //         mockUserSignup.username ="Test";
+    //         mockUserSignup.password = "aa";
+    //         app.set('body', mockUserSignup);
+    //         const response = await request(app).post("/sign_up")
+    //         .send(serialise(mockUserSignup));
+    //         expect(response.statusCode).toEqual(400);
+    //         expect(response.text).toEqual(expect.stringContaining("Password length is not valid"));
+    //         // console.log(response);
+    //     });
+
+    // });
+
+    // // describe("GET PROFILE", () => {
+
+    // //     // app.set('body', mockUser);
+    // //     //     let response = await request(app).post('/login')
+    // //     //         .send(serialise(mockUser))
+    // //     //         //    expect('Content-Type', /json/)
+    // //     //         expect(response.statusCode).toEqual(302);
+    // //         // await account.deleteMany({});
+
+    // //     it("Should retun Profile page", async () => {
+    // //         mockUser.username = "Test-login";
+    // //         mockUser.password = "12345678";
+
+    // //         app.set('body', mockUser);
+    // //         let response = await request(app).post('/login')
+    // //             .send(serialise(mockUser))
+    // //             //    expect('Content-Type', /json/)
+    // //             expect(response.statusCode).toEqual(302);
+    // //             console.log(re.body);
+    // //         let testLogin = {
+    // //             login: testUserId
+    // //         }
+    // //         app.set('cookies', testLogin);
+    // //         // console.log(request);
+    // //         // console.log(request.cookies);
+    // //         const response2 = await request(app).get('/profile')
+    // //         // .send(serialise(testLogin))
+    // //     });
+    // // });
+
+    // it("GET SIGN OUT", async () => {
+    //     const response = await request(app).get('/sign_out');
+    //     // console.log(response);
+    //     expect(response.statusCode).toBe(302);
+    // });
 });

@@ -201,6 +201,7 @@ router.post("/account_edit_:accountId", function (req, res) {
             console.log("error")
         }
         if (result == null) {
+            res.statusCode = 400;
             res.send("Account with id '" + req.params["accountId"] + "' cannot be found!")
             return;
         }
@@ -228,13 +229,13 @@ router.post("/account_edit_:accountId", function (req, res) {
             r = null
             try {
                 r = await database.getDb().collection("account").findOne(q);
-                res.statusCode = 200;
             } catch (err) {
                 console.log("error")
             }
             if (r != null) {
                 parts["name_err"] = "<span style='color:red'>Username '" + req.body.username + "' has been used already</span>"
                 success = false;
+                res.statusCode = 400;
             }
         }
         result["cardNo"] = req.body.cardNo
@@ -247,6 +248,7 @@ router.post("/account_edit_:accountId", function (req, res) {
             if (req.body["password"].length < 6 || req.body["password"].length > 32) {
                 parts["pass_err"] = "<span style='color:red'>Password length is not valid</span>"
                 success = false
+                res.statusCode = 400;
             } else {
                 result["password"] = req.body.password;
             }
