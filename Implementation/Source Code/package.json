@@ -24,13 +24,22 @@
         "ts-jest": "^26.5.4"
     },
     "scripts": {
+<<<<<<< HEAD
         "test": "jest --watch --no-cache",
         "start": "nodemon server.js"
+=======
+        "test": "jest --watchAll --no-cache",
+        "start": "node server.js",
+        "dev": "nodemon server.js"
+>>>>>>> 60c6d939ecfc525a8ba9dcbfe29acaf75b3bdfe2
     },
     "jest": {
         "preset": "@shelf/jest-mongodb",
         "testEnvironment": "node"
     },
-    "author": "",
-    "license": "ISC"
+    "author": "sadino",
+    "license": "ISC",
+    "engines": {
+        "node": "12.18.4"
+    }
 }

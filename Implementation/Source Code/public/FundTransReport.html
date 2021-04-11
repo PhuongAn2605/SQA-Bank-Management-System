@@ -70,16 +70,16 @@
             <br>
             <div class="form-group row">
                 <label for="inputZip" class="col-sm-3">By Account No.</label>
-                <div class="col-sm-3">
-                    <input type="text" class="form-control" id="inputSelect" min="1">
-                </div>
+                <!-- <div class="col-sm-3">
+                    <input type="text" class="form-control" id="inputSelect" >
+                </div> -->
                 <label for="inputZip" class="col-sm-3">Benifical Account No.</label>
                 <div class="col-sm-3">
-                    <input type="text" class="form-control" id="inputSelect" min="1">
+                    <input type="text" class="form-control" id="inputAccount" onkeyup="search()">
                 </div>
-                <form class="d-flex">
+                <!-- <form class="d-flex">
                     <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
+                </form> -->
             </div>
             <br><br>
             <table class="table table-bordered table-striped">
@@ -181,6 +181,28 @@
         </div>
     </div>
     <script>
+        function search() {
+            // Declare variables
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("inputAccount");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[1];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
         let liveModel = document.querySelector("#liveToastBtn");
         liveModel.addEventListener("click", function() {
             $('.toast').toast('show');
