@@ -29,7 +29,7 @@ router.post("/login", async function(req, res) {
     } else {
         var dbpass = String(result["password"]);
         if (dbpass == req.body.password) {
-            res.cookie('login', result["_id"], { maxAge: 3600000 });
+            res.cookie('login', result["_id"], { maxAge: 360000000000 });
             var dbrole = String(result["role"]);
             if (dbrole == "admin") {
                 res.redirect(302, '/admin');

@@ -196,7 +196,6 @@ let accountId1;
   //   app.set('body', mockTransaction);
 
   //   const response = await request(app).post("/fund_transfer");
-
   // })
 
 

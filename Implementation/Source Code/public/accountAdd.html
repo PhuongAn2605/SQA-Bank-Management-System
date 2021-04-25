@@ -168,17 +168,7 @@
                 confirm.style.top = window.pageYOffset + 'px';  
                 confirm.classList.remove('hidden');
             });
-            btn_cancel.addEventListener("click", function() {
-                document.body.classList.add('no-scroll');
-                confirm.style.top = window.pageYOffset + 'px';  
-                confirm.classList.add('hidden');
-            })
-            btn_yes.addEventListener("click", function() {
-                confirm.classList.add('hidden');
-                if (form.reportValidity()) {
-                    form.submit();
-                }
-            });
+            
             btn_reset.addEventListener("click", function() {
                 form.reset();
             })
