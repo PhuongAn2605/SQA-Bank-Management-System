@@ -1,8 +1,8 @@
-#SQA_Spring2021 
-#Bank-Management-System
+# SQA_Spring2021 
+# Bank-Management-System
 A small project to manage bank system
 
-#Team members:
+# Team members:
 1. An Thị Phương
 2. Trần Thị Ngọc Ánh
 3. Trương Quốc Đạt
@@ -16,5 +16,3 @@ This project contains source code and related documentation for a small web appl
 - Install node modules and all dependencies: npm install
 - Install MongoDB tools for restoring data: https://www.mongodb.com/try/download/database-tools
 - Run the source code: npm start
-
-Good luck! Have fun!
